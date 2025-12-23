@@ -11,7 +11,7 @@
 ## Task Organization
 
 任务按照以下维度组织：
-- **Phase**: 开发阶段（P0-P5）
+- **Phase**: 开发阶段（P0-P6）
 - **Module**: 所属模块（14个核心包）
 - **Priority**: 优先级（Critical, High, Medium, Low）
 - **Dependencies**: 依赖的其他任务
