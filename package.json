@@ -1,16 +1,21 @@
 {
   "name": "seashore",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "AI Agent Development Toolkit based on @tanstack/ai",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["ai", "agent", "llm", "tanstack"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nx": "22.3.3"
+    "nx": "22.3.3",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
   },
-  "nx": {}
+  "workspaces": [
+    "packages/*"
+  ]
 }
