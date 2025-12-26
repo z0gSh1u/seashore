@@ -4,18 +4,24 @@
  * Converts Zod schemas to JSON Schema for LLM function calling
  */
 
-import type { ZodSchema, ZodTypeDef } from 'zod';
+import type { ZodSchema } from 'zod';
 import type { JsonSchema, JsonSchemaProperty } from './types.js';
+
+// Internal type for Zod type definitions
+interface ZodTypeDef {
+  typeName: string;
+  shape?: () => Record<string, ZodSchema>;
+  description?: string;
+  innerType?: ZodSchema;
+  options?: readonly ZodSchema[];
+  type?: ZodSchema;
+}
 
 /**
  * Convert a Zod schema to JSON Schema
  */
 export function zodToJsonSchema(schema: ZodSchema): JsonSchema {
-  const typeDef = schema._def as ZodTypeDef & {
-    typeName: string;
-    shape?: () => Record<string, ZodSchema>;
-    description?: string;
-  };
+  const typeDef = schema._def as ZodTypeDef;
 
   if (typeDef.typeName !== 'ZodObject') {
     throw new Error('Root schema must be a ZodObject');
@@ -26,11 +32,11 @@ export function zodToJsonSchema(schema: ZodSchema): JsonSchema {
   const required: string[] = [];
 
   for (const [key, value] of Object.entries(shape)) {
-    const prop = zodPropertyToJsonSchema(value);
+    const prop = zodPropertyToJsonSchema(value as ZodSchema);
     properties[key] = prop;
 
     // Check if field is required (not optional/nullable)
-    if (!isOptional(value)) {
+    if (!isOptional(value as ZodSchema)) {
       required.push(key);
     }
   }
@@ -47,14 +53,7 @@ export function zodToJsonSchema(schema: ZodSchema): JsonSchema {
  * Convert a Zod property to JSON Schema property
  */
 function zodPropertyToJsonSchema(schema: ZodSchema): JsonSchemaProperty {
-  const def = schema._def as ZodTypeDef & {
-    typeName: string;
-    description?: string;
-    values?: readonly unknown[];
-    innerType?: ZodSchema;
-    type?: ZodSchema;
-    shape?: () => Record<string, ZodSchema>;
-  };
+  const def = schema._def as ZodTypeDef;
 
   // Handle optional/nullable by unwrapping
   if (def.typeName === 'ZodOptional' || def.typeName === 'ZodNullable') {
@@ -71,7 +70,7 @@ function zodPropertyToJsonSchema(schema: ZodSchema): JsonSchemaProperty {
     case 'ZodNativeEnum':
       return {
         ...base,
-        enum: def.values,
+        enum: (def as ZodTypeDef & { values?: readonly unknown[] }).values,
       };
 
     case 'ZodArray':
@@ -86,8 +85,8 @@ function zodPropertyToJsonSchema(schema: ZodSchema): JsonSchemaProperty {
       const req: string[] = [];
 
       for (const [key, value] of Object.entries(shape)) {
-        props[key] = zodPropertyToJsonSchema(value);
-        if (!isOptional(value)) {
+        props[key] = zodPropertyToJsonSchema(value as ZodSchema);
+        if (!isOptional(value as ZodSchema)) {
           req.push(key);
         }
       }

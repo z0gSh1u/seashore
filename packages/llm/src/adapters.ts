@@ -10,8 +10,8 @@ export { openaiText } from '@tanstack/ai-openai';
 export { anthropicText } from '@tanstack/ai-anthropic';
 export { geminiText } from '@tanstack/ai-gemini';
 
-// Re-export core chat/generate functions
-export { chat, generate, toStreamResponse } from '@tanstack/ai';
+// Re-export core chat functions
+export { chat, toStreamResponse } from '@tanstack/ai';
 
 // Type-safe adapter factory functions for internal use
 import type { TextAdapter } from './types.js';

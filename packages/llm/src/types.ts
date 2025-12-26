@@ -110,7 +110,7 @@ export interface TTSAdapter {
 export interface EmbeddingAdapter {
   readonly provider: 'openai' | 'gemini';
   readonly model: string;
-  readonly dimensions?: number;
+  readonly dimensions?: number | undefined;
 }
 
 /**

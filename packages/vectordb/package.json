@@ -1,0 +1,47 @@
+{
+  "name": "@seashore/vectordb",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Vector database with pgvector for Seashore Agent Framework",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./schema": {
+      "import": "./dist/schema/index.js",
+      "types": "./dist/schema/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "vectordb",
+    "pgvector",
+    "embedding",
+    "similarity-search",
+    "seashore"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@seashore/storage": "workspace:*",
+    "drizzle-orm": "^0.44.2",
+    "pgvector": "^0.2.0"
+  },
+  "peerDependencies": {
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "zod": "^4.0.5"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false
+}

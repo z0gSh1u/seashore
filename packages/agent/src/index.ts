@@ -44,3 +44,13 @@ export {
 
 // Streaming utilities
 export { collectStream, StreamChunks, streamToReadable, parseSSEStream } from './stream.js';
+
+// Workflow agent integration
+export {
+  createWorkflowAgent,
+  createAgentNode,
+  composeAgents,
+  type WorkflowAgentConfig,
+  type WorkflowAgentInput,
+  type WorkflowAgentOutput,
+} from './workflow-agent.js';

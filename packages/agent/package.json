@@ -27,7 +27,8 @@
   "license": "MIT",
   "dependencies": {
     "@seashore/llm": "workspace:*",
-    "@seashore/tool": "workspace:*"
+    "@seashore/tool": "workspace:*",
+    "@seashore/workflow": "workspace:*"
   },
   "peerDependencies": {
     "zod": "^4.0.5"

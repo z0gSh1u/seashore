@@ -1,0 +1,47 @@
+{
+  "name": "@seashore/workflow",
+  "version": "0.1.0",
+  "description": "Workflow orchestration for Seashore Agent Framework",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@seashore/llm": "workspace:*",
+    "@seashore/tool": "workspace:*",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "rollup": "^4.41.0",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "rollup-plugin-dts": "^6.1.1",
+    "vitest": "^3.1.4"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  },
+  "keywords": [
+    "workflow",
+    "agent",
+    "orchestration",
+    "llm"
+  ],
+  "license": "MIT"
+}

@@ -53,6 +53,9 @@ importers:
       '@seashore/tool':
         specifier: workspace:*
         version: link:../tool
+      '@seashore/workflow':
+        specifier: workspace:*
+        version: link:../workflow
     devDependencies:
       zod:
         specifier: ^4.0.5
@@ -95,6 +98,34 @@ importers:
       zod:
         specifier: ^4.0.5
         version: 4.2.1
+
+  packages/workflow:
+    dependencies:
+      '@seashore/llm':
+        specifier: workspace:*
+        version: link:../llm
+      '@seashore/tool':
+        specifier: workspace:*
+        version: link:../tool
+      zod:
+        specifier: ^4.0.5
+        version: 4.2.1
+    devDependencies:
+      '@rollup/plugin-typescript':
+        specifier: ^12.1.2
+        version: 12.3.0(rollup@4.54.0)(tslib@2.8.1)(typescript@5.9.3)
+      rollup:
+        specifier: ^4.41.0
+        version: 4.54.0
+      rollup-plugin-dts:
+        specifier: ^6.1.1
+        version: 6.3.0(rollup@4.54.0)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.1.4
+        version: 3.2.4(@types/node@22.19.3)(yaml@2.8.2)
 
 packages:
 
