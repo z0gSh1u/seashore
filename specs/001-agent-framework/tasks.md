@@ -278,18 +278,18 @@ packages/
 
 ### Implementation for User Story 8
 
-- [ ] T112 [US8] Create packages/mcp/package.json
-- [ ] T113 [US8] Define MCP types in packages/mcp/src/types.ts (MCPTool, MCPResource, MCPClient)
-- [ ] T114 [US8] Implement stdio transport in packages/mcp/src/transports/stdio.ts
-- [ ] T115 [P] [US8] Implement SSE transport in packages/mcp/src/transports/sse.ts
-- [ ] T116 [P] [US8] Implement WebSocket transport in packages/mcp/src/transports/websocket.ts
-- [ ] T117 [US8] Implement createMCPClient in packages/mcp/src/client.ts
-- [ ] T118 [US8] Implement createMCPToolBridge in packages/mcp/src/bridge.ts
-- [ ] T119 [US8] Implement discoverMCPServers in packages/mcp/src/discovery.ts
-- [ ] T120 [US8] Create main export in packages/mcp/src/index.ts
-- [ ] T121 [US8] Add unit tests in packages/mcp/\_\_tests\_\_/client.test.ts
+- [X] T112 [US8] Create packages/mcp/package.json
+- [X] T113 [US8] Define MCP types in packages/mcp/src/types.ts (MCPTool, MCPResource, MCPClient)
+- [X] T114 [US8] Implement stdio transport in packages/mcp/src/transports/stdio.ts
+- [X] T115 [P] [US8] Implement SSE transport in packages/mcp/src/transports/sse.ts
+- [X] T116 [P] [US8] Implement WebSocket transport in packages/mcp/src/transports/websocket.ts
+- [X] T117 [US8] Implement createMCPClient in packages/mcp/src/client.ts
+- [X] T118 [US8] Implement createMCPToolBridge in packages/mcp/src/bridge.ts
+- [X] T119 [US8] Implement discoverMCPServers in packages/mcp/src/discovery.ts
+- [X] T120 [US8] Create main export in packages/mcp/src/index.ts
+- [X] T121 [US8] Add unit tests in packages/mcp/\_\_tests\_\_/client.test.ts
 
-**Checkpoint**: User Story 8 complete - Agents can connect to MCP servers
+**Checkpoint**: User Story 8 complete - Agents can connect to MCP servers ✅
 
 ---
 
@@ -301,22 +301,22 @@ packages/
 
 ### Implementation for User Story 9
 
-- [ ] T122 [US9] Create packages/genui/package.json with React 18, @tanstack/ai-react
-- [ ] T123 [US9] Define GenUI types in packages/genui/src/types.ts (ChatMessage, ToolCallUI, ComponentRenderer)
-- [ ] T124 [US9] Implement useChat hook in packages/genui/src/hooks/useChat.ts
-- [ ] T125 [US9] Implement useChatStream hook in packages/genui/src/hooks/useChatStream.ts
-- [ ] T126 [US9] Implement ChatMessages component in packages/genui/src/components/ChatMessages.tsx
-- [ ] T127 [P] [US9] Implement ChatInput component in packages/genui/src/components/ChatInput.tsx
-- [ ] T128 [P] [US9] Implement ChatMessage component in packages/genui/src/components/ChatMessage.tsx
-- [ ] T129 [US9] Implement Chat composite component in packages/genui/src/components/Chat.tsx
-- [ ] T130 [US9] Implement createGenUIRegistry in packages/genui/src/registry.ts
-- [ ] T131 [US9] Implement renderToolCall in packages/genui/src/renderer.ts
-- [ ] T132 [US9] Add ChatToolResult component in packages/genui/src/components/ChatToolResult.tsx
-- [ ] T133 [US9] Add CSS variables and theming in packages/genui/src/styles.css
-- [ ] T134 [US9] Create main export in packages/genui/src/index.ts
-- [ ] T135 [US9] Add component tests in packages/genui/\_\_tests\_\_/components.test.tsx
+- [X] T122 [US9] Create packages/genui/package.json with React 18, @tanstack/ai-react
+- [X] T123 [US9] Define GenUI types in packages/genui/src/types.ts (ChatMessage, ToolCallUI, ComponentRenderer)
+- [X] T124 [US9] Implement useChat hook in packages/genui/src/hooks/useChat.ts
+- [X] T125 [US9] Implement useChatStream hook in packages/genui/src/hooks/useChatStream.ts
+- [X] T126 [US9] Implement ChatMessages component in packages/genui/src/components/ChatMessages.tsx
+- [X] T127 [P] [US9] Implement ChatInput component in packages/genui/src/components/ChatInput.tsx
+- [X] T128 [P] [US9] Implement ChatMessage component in packages/genui/src/components/ChatMessage.tsx
+- [X] T129 [US9] Implement Chat composite component in packages/genui/src/components/Chat.tsx
+- [X] T130 [US9] Implement createGenUIRegistry in packages/genui/src/registry.ts
+- [X] T131 [US9] Implement renderToolCall in packages/genui/src/renderer.ts
+- [X] T132 [US9] Add ChatToolResult component in packages/genui/src/components/ChatToolResult.tsx
+- [X] T133 [US9] Add CSS variables and theming in packages/genui/src/styles.css
+- [X] T134 [US9] Create main export in packages/genui/src/index.ts
+- [X] T135 [US9] Add component tests in packages/genui/\_\_tests\_\_/components.test.tsx
 
-**Checkpoint**: User Story 9 complete - developers can build chat UIs with GenUI components
+**Checkpoint**: User Story 9 complete - developers can build chat UIs with GenUI components ✅
 
 ---
 
@@ -328,18 +328,18 @@ packages/
 
 ### Implementation for User Story 10
 
-- [ ] T136 [US10] Create packages/observability/package.json
-- [ ] T137 [US10] Define observability types in packages/observability/src/types.ts (Span, SpanContext, TokenUsage)
-- [ ] T138 [US10] Implement createTracer in packages/observability/src/tracer.ts
-- [ ] T139 [US10] Implement createTokenCounter in packages/observability/src/tokens.ts
-- [ ] T140 [US10] Implement createLogger in packages/observability/src/logger.ts
-- [ ] T141 [US10] Implement observabilityMiddleware in packages/observability/src/middleware.ts
-- [ ] T142 [US10] Add OpenTelemetry exporter in packages/observability/src/exporters/otlp.ts
-- [ ] T143 [P] [US10] Add console exporter in packages/observability/src/exporters/console.ts
-- [ ] T144 [US10] Create main export in packages/observability/src/index.ts
-- [ ] T145 [US10] Add unit tests in packages/observability/\_\_tests\_\_/tracer.test.ts
+- [X] T136 [US10] Create packages/observability/package.json
+- [X] T137 [US10] Define observability types in packages/observability/src/types.ts (Span, SpanContext, TokenUsage)
+- [X] T138 [US10] Implement createTracer in packages/observability/src/tracer.ts
+- [X] T139 [US10] Implement createTokenCounter in packages/observability/src/tokens.ts
+- [X] T140 [US10] Implement createLogger in packages/observability/src/logger.ts
+- [X] T141 [US10] Implement observabilityMiddleware in packages/observability/src/middleware.ts
+- [X] T142 [US10] Add OpenTelemetry exporter in packages/observability/src/exporters/otlp.ts
+- [X] T143 [P] [US10] Add console exporter in packages/observability/src/exporters/console.ts
+- [X] T144 [US10] Create main export in packages/observability/src/index.ts
+- [X] T145 [US10] Add unit tests in packages/observability/\_\_tests\_\_/tracer.test.ts
 
-**Checkpoint**: User Story 10 complete - Agent operations are fully traceable
+**Checkpoint**: User Story 10 complete - Agent operations are fully traceable ✅
 
 ---
 
@@ -351,21 +351,21 @@ packages/
 
 ### Implementation for User Story 11
 
-- [ ] T146 [US11] Create packages/evaluation/package.json
-- [ ] T147 [US11] Define evaluation types in packages/evaluation/src/types.ts (Metric, TestCase, EvaluationResult)
-- [ ] T148 [US11] Implement createEvaluator in packages/evaluation/src/evaluator.ts
-- [ ] T149 [US11] Implement evaluate and evaluateBatch in packages/evaluation/src/evaluate.ts
-- [ ] T150 [US11] Implement relevanceMetric in packages/evaluation/src/metrics/relevance.ts
-- [ ] T151 [P] [US11] Implement faithfulnessMetric in packages/evaluation/src/metrics/faithfulness.ts
-- [ ] T152 [P] [US11] Implement coherenceMetric in packages/evaluation/src/metrics/coherence.ts
-- [ ] T153 [P] [US11] Implement harmfulnessMetric in packages/evaluation/src/metrics/harmfulness.ts
-- [ ] T154 [US11] Implement customMetric in packages/evaluation/src/metrics/custom.ts
-- [ ] T155 [US11] Implement createDataset and loadDataset in packages/evaluation/src/dataset.ts
-- [ ] T156 [US11] Implement generateReport in packages/evaluation/src/report.ts
-- [ ] T157 [US11] Create main export in packages/evaluation/src/index.ts
-- [ ] T158 [US11] Add unit tests in packages/evaluation/\_\_tests\_\_/evaluation.test.ts
+- [X] T146 [US11] Create packages/evaluation/package.json
+- [X] T147 [US11] Define evaluation types in packages/evaluation/src/types.ts (Metric, TestCase, EvaluationResult)
+- [X] T148 [US11] Implement createEvaluator in packages/evaluation/src/evaluator.ts
+- [X] T149 [US11] Implement evaluate and evaluateBatch in packages/evaluation/src/evaluate.ts
+- [X] T150 [US11] Implement relevanceMetric in packages/evaluation/src/metrics/relevance.ts
+- [X] T151 [P] [US11] Implement faithfulnessMetric in packages/evaluation/src/metrics/faithfulness.ts
+- [X] T152 [P] [US11] Implement coherenceMetric in packages/evaluation/src/metrics/coherence.ts
+- [X] T153 [P] [US11] Implement harmfulnessMetric in packages/evaluation/src/metrics/harmfulness.ts
+- [X] T154 [US11] Implement customMetric in packages/evaluation/src/metrics/custom.ts
+- [X] T155 [US11] Implement createDataset and loadDataset in packages/evaluation/src/dataset.ts
+- [X] T156 [US11] Implement generateReport in packages/evaluation/src/report.ts
+- [X] T157 [US11] Create main export in packages/evaluation/src/index.ts
+- [X] T158 [US11] Add unit tests in packages/evaluation/\_\_tests\_\_/evaluation.test.ts
 
-**Checkpoint**: User Story 11 complete - Agents can be evaluated systematically
+**Checkpoint**: User Story 11 complete - Agents can be evaluated systematically ✅
 
 ---
 
@@ -377,22 +377,22 @@ packages/
 
 ### Implementation for User Story 12
 
-- [ ] T159 [US12] Create packages/security/package.json
-- [ ] T160 [US12] Define security types in packages/security/src/types.ts (SecurityRule, Violation, Guardrails)
-- [ ] T161 [US12] Implement promptInjectionRule in packages/security/src/rules/prompt-injection.ts
-- [ ] T162 [P] [US12] Implement piiDetectionRule in packages/security/src/rules/pii-detection.ts
-- [ ] T163 [P] [US12] Implement toxicityRule in packages/security/src/rules/toxicity.ts
-- [ ] T164 [P] [US12] Implement topicBlockRule in packages/security/src/rules/topic-block.ts
-- [ ] T165 [P] [US12] Implement lengthLimitRule in packages/security/src/rules/length-limit.ts
-- [ ] T166 [US12] Implement createInputFilter in packages/security/src/filters/input-filter.ts
-- [ ] T167 [US12] Implement createOutputFilter in packages/security/src/filters/output-filter.ts
-- [ ] T168 [US12] Implement createGuardrails in packages/security/src/guardrails.ts
-- [ ] T169 [US12] Implement securityMiddleware in packages/security/src/middleware.ts
-- [ ] T170 [US12] Add audit logging in packages/security/src/audit.ts
-- [ ] T171 [US12] Create main export in packages/security/src/index.ts
-- [ ] T172 [US12] Add unit tests in packages/security/\_\_tests\_\_/guardrails.test.ts
+- [X] T159 [US12] Create packages/security/package.json
+- [X] T160 [US12] Define security types in packages/security/src/types.ts (SecurityRule, Violation, Guardrails)
+- [X] T161 [US12] Implement promptInjectionRule in packages/security/src/rules/prompt-injection.ts
+- [X] T162 [P] [US12] Implement piiDetectionRule in packages/security/src/rules/pii-detection.ts
+- [X] T163 [P] [US12] Implement toxicityRule in packages/security/src/rules/toxicity.ts
+- [X] T164 [P] [US12] Implement topicBlockRule in packages/security/src/rules/topic-block.ts
+- [X] T165 [P] [US12] Implement lengthLimitRule in packages/security/src/rules/length-limit.ts
+- [X] T166 [US12] Implement createInputFilter in packages/security/src/filters/input-filter.ts
+- [X] T167 [US12] Implement createOutputFilter in packages/security/src/filters/output-filter.ts
+- [X] T168 [US12] Implement createGuardrails in packages/security/src/guardrails.ts
+- [X] T169 [US12] Implement securityMiddleware in packages/security/src/middleware.ts
+- [X] T170 [US12] Add audit logging in packages/security/src/audit.ts
+- [X] T171 [US12] Create main export in packages/security/src/index.ts
+- [X] T172 [US12] Add unit tests in packages/security/\_\_tests\_\_/guardrails.test.ts
 
-**Checkpoint**: User Story 12 complete - Agent I/O can be filtered for safety
+**Checkpoint**: User Story 12 complete - Agent I/O can be filtered for safety ✅
 
 ---
 
@@ -404,24 +404,24 @@ packages/
 
 ### Implementation for User Story 13
 
-- [ ] T173 [US13] Create packages/deploy/package.json with hono, @hono/node-server
-- [ ] T174 [US13] Define deploy types in packages/deploy/src/types.ts (ServerConfig, ChatRequest, ChatResponse)
-- [ ] T175 [US13] Implement createServer in packages/deploy/src/server.ts
-- [ ] T176 [US13] Implement createChatHandler in packages/deploy/src/handlers/chat.ts
-- [ ] T177 [P] [US13] Implement createAgentHandler in packages/deploy/src/handlers/agent.ts
-- [ ] T178 [US13] Implement createSSEStream in packages/deploy/src/sse.ts
-- [ ] T179 [US13] Implement cloudflareAdapter in packages/deploy/src/adapters/cloudflare.ts
-- [ ] T180 [P] [US13] Implement nodeAdapter in packages/deploy/src/adapters/node.ts
-- [ ] T181 [US13] Add authentication middleware in packages/deploy/src/middleware/auth.ts
-- [ ] T182 [P] [US13] Add rate limiting middleware in packages/deploy/src/middleware/rate-limit.ts
-- [ ] T183 [P] [US13] Add CORS middleware in packages/deploy/src/middleware/cors.ts
-- [ ] T184 [US13] Add error handling in packages/deploy/src/error-handler.ts
-- [ ] T185 [US13] Create main export in packages/deploy/src/index.ts
-- [ ] T186 [US13] Add integration tests in packages/deploy/\_\_tests\_\_/server.test.ts
-- [ ] T187 [US13] Create example wrangler.toml for Cloudflare deployment
-- [ ] T188 [US13] Create example Dockerfile for Node.js deployment
+- [X] T173 [US13] Create packages/deploy/package.json with hono, @hono/node-server
+- [X] T174 [US13] Define deploy types in packages/deploy/src/types.ts (ServerConfig, ChatRequest, ChatResponse)
+- [X] T175 [US13] Implement createServer in packages/deploy/src/server.ts
+- [X] T176 [US13] Implement createChatHandler in packages/deploy/src/handlers/chat.ts
+- [X] T177 [P] [US13] Implement createAgentHandler in packages/deploy/src/handlers/agent.ts
+- [X] T178 [US13] Implement createSSEStream in packages/deploy/src/sse.ts
+- [X] T179 [US13] Implement cloudflareAdapter in packages/deploy/src/adapters/cloudflare.ts
+- [X] T180 [P] [US13] Implement nodeAdapter in packages/deploy/src/adapters/node.ts
+- [X] T181 [US13] Add authentication middleware in packages/deploy/src/middleware/auth.ts
+- [X] T182 [P] [US13] Add rate limiting middleware in packages/deploy/src/middleware/rate-limit.ts
+- [X] T183 [P] [US13] Add CORS middleware in packages/deploy/src/middleware/cors.ts
+- [X] T184 [US13] Add error handling in packages/deploy/src/error-handler.ts
+- [X] T185 [US13] Create main export in packages/deploy/src/index.ts
+- [X] T186 [US13] Add integration tests in packages/deploy/\_\_tests\_\_/server.test.ts
+- [X] T187 [US13] Create example wrangler.toml for Cloudflare deployment
+- [X] T188 [US13] Create example Dockerfile for Node.js deployment
 
-**Checkpoint**: User Story 13 complete - Agents can be deployed to production
+**Checkpoint**: User Story 13 complete - Agents can be deployed to production ✅
 
 ---
 
@@ -429,14 +429,14 @@ packages/
 
 **Purpose**: Documentation, optimization, and final validation
 
-- [ ] T189 [P] Update root README.md with installation and quickstart guide
-- [ ] T190 [P] Create API documentation site structure in docs/
-- [ ] T191 [P] Add JSDoc comments to all public APIs
-- [ ] T192 Run quickstart.md validation - verify all examples work
-- [ ] T193 Performance optimization audit across all packages
-- [ ] T194 [P] Add missing edge case tests
-- [ ] T195 Security audit of all packages
-- [ ] T196 Create CHANGELOG.md and prepare v0.1.0 release
+- [X] T189 [P] Update root README.md with installation and quickstart guide
+- [X] T190 [P] Create API documentation site structure in docs/
+- [X] T191 [P] Add JSDoc comments to all public APIs
+- [X] T192 Run quickstart.md validation - verify all examples work
+- [X] T193 Performance optimization audit across all packages
+- [X] T194 [P] Add missing edge case tests
+- [X] T195 Security audit of all packages
+- [X] T196 Create CHANGELOG.md and prepare v0.1.0 release
 
 ---
 
