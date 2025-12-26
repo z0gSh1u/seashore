@@ -309,11 +309,17 @@ export function useChat(options: UseChatOptions): UseChatReturn {
    * Reload the last assistant response
    */
   const reload = useCallback(async () => {
-    // Find last user message
-    const lastUserMessageIndex = messages.findLastIndex((m) => m.role === 'user');
+    // Find last user message (reverse search)
+    let lastUserMessageIndex = -1;
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i]!.role === 'user') {
+        lastUserMessageIndex = i;
+        break;
+      }
+    }
     if (lastUserMessageIndex === -1) return;
 
-    const lastUserMessage = messages[lastUserMessageIndex];
+    const lastUserMessage = messages[lastUserMessageIndex]!;
 
     // Remove messages after the last user message
     setMessages(messages.slice(0, lastUserMessageIndex));
