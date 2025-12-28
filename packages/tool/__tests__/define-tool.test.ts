@@ -2,7 +2,7 @@
  * @seashore/tool - Unit Tests
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
 import { defineTool } from '../src/define-tool';
 import { zodToJsonSchema } from '../src/zod-to-json-schema';
@@ -202,8 +202,8 @@ describe('@seashore/tool', () => {
       const jsonSchema = zodToJsonSchema(schema);
 
       expect(jsonSchema.type).toBe('object');
-      expect(jsonSchema.properties['name'].type).toBe('string');
-      expect(jsonSchema.properties['age'].type).toBe('number');
+      expect(jsonSchema.properties?.['name']?.type).toBe('string');
+      expect(jsonSchema.properties?.['age']?.type).toBe('number');
       expect(jsonSchema.required).toContain('name');
       expect(jsonSchema.required).toContain('age');
     });
@@ -227,8 +227,8 @@ describe('@seashore/tool', () => {
 
       const jsonSchema = zodToJsonSchema(schema);
 
-      expect(jsonSchema.properties['status'].type).toBe('string');
-      expect(jsonSchema.properties['status'].enum).toEqual(['active', 'inactive', 'pending']);
+      expect(jsonSchema.properties?.['status']?.type).toBe('string');
+      expect(jsonSchema.properties?.['status']?.enum).toEqual(['active', 'inactive', 'pending']);
     });
 
     it('should convert arrays', () => {
@@ -238,8 +238,8 @@ describe('@seashore/tool', () => {
 
       const jsonSchema = zodToJsonSchema(schema);
 
-      expect(jsonSchema.properties['tags'].type).toBe('array');
-      expect(jsonSchema.properties['tags'].items?.type).toBe('string');
+      expect(jsonSchema.properties?.['tags']?.type).toBe('array');
+      expect(jsonSchema.properties?.['tags']?.items?.type).toBe('string');
     });
 
     it('should include descriptions', () => {
@@ -249,7 +249,7 @@ describe('@seashore/tool', () => {
 
       const jsonSchema = zodToJsonSchema(schema);
 
-      expect(jsonSchema.properties['query'].description).toBe('The search query');
+      expect(jsonSchema.properties?.['query']?.description).toBe('The search query');
     });
 
     it('should convert nested objects', () => {
@@ -262,8 +262,8 @@ describe('@seashore/tool', () => {
 
       const jsonSchema = zodToJsonSchema(schema);
 
-      expect(jsonSchema.properties['user'].type).toBe('object');
-      expect(jsonSchema.properties['user'].properties?.['name'].type).toBe('string');
+      expect(jsonSchema.properties?.['user']?.type).toBe('object');
+      expect(jsonSchema.properties?.['user']?.properties?.['name']?.type).toBe('string');
     });
 
     it('should handle non-object root schema', () => {

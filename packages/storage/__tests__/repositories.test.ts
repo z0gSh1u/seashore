@@ -9,22 +9,22 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
  * Set DATABASE_URL environment variable to run.
  */
 describe.skipIf(!process.env['DATABASE_URL'])('@seashore/storage integration', () => {
-  let database: Awaited<ReturnType<typeof import('../src/database.js').createDatabase>>;
+  let database: Awaited<ReturnType<typeof import('../src/database').createDatabase>>;
   let threadRepo: Awaited<
-    ReturnType<typeof import('../src/repositories/thread.js').createThreadRepository>
+    ReturnType<typeof import('../src/repositories/thread').createThreadRepository>
   >;
   let messageRepo: Awaited<
-    ReturnType<typeof import('../src/repositories/message.js').createMessageRepository>
+    ReturnType<typeof import('../src/repositories/message').createMessageRepository>
   >;
   let traceRepo: Awaited<
-    ReturnType<typeof import('../src/repositories/trace.js').createTraceRepository>
+    ReturnType<typeof import('../src/repositories/trace').createTraceRepository>
   >;
 
   beforeAll(async () => {
-    const { createDatabase } = await import('../src/database.js');
-    const { createThreadRepository } = await import('../src/repositories/thread.js');
-    const { createMessageRepository } = await import('../src/repositories/message.js');
-    const { createTraceRepository } = await import('../src/repositories/trace.js');
+    const { createDatabase } = await import('../src/database');
+    const { createThreadRepository } = await import('../src/repositories/thread');
+    const { createMessageRepository } = await import('../src/repositories/message');
+    const { createTraceRepository } = await import('../src/repositories/trace');
 
     database = createDatabase({
       connectionString: process.env['DATABASE_URL']!,

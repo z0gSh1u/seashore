@@ -111,9 +111,11 @@ describe('Zod to JSON Schema Conversion', () => {
       const jsonSchema = zodToJsonSchema(schema);
 
       // Zod 4 uses anyOf for nullable types
-      const valueProp = jsonSchema.properties.value as { anyOf?: Array<{ type: string }> };
-      expect(valueProp.anyOf).toBeDefined();
-      expect(valueProp.anyOf).toEqual(
+      const valueProp = jsonSchema.properties?.value as
+        | { anyOf?: Array<{ type: string }> }
+        | undefined;
+      expect(valueProp?.anyOf).toBeDefined();
+      expect(valueProp?.anyOf).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ type: 'string' }),
           expect.objectContaining({ type: 'null' }),
@@ -133,9 +135,11 @@ describe('Zod to JSON Schema Conversion', () => {
       });
       const jsonSchema = zodToJsonSchema(schema);
 
-      expect(jsonSchema.properties.user.type).toBe('object');
-      expect(jsonSchema.properties.user.properties.address.type).toBe('object');
-      expect(jsonSchema.properties.user.properties.address.properties.city.type).toBe('string');
+      expect(jsonSchema.properties?.user?.type).toBe('object');
+      expect(jsonSchema.properties?.user?.properties?.address?.type).toBe('object');
+      expect(jsonSchema.properties?.user?.properties?.address?.properties?.city?.type).toBe(
+        'string'
+      );
     });
   });
 
@@ -172,8 +176,8 @@ describe('Zod to JSON Schema Conversion', () => {
       const jsonSchema = zodToJsonSchema(schema);
 
       expect(jsonSchema.type).toBe('array');
-      expect(jsonSchema.items.type).toBe('object');
-      expect(jsonSchema.items.properties.id.type).toBe('string');
+      expect(jsonSchema.items?.type).toBe('object');
+      expect(jsonSchema.items?.properties?.id?.type).toBe('string');
     });
   });
 
@@ -262,8 +266,8 @@ describe('Zod to JSON Schema Conversion', () => {
       });
       const jsonSchema = zodToJsonSchema(schema);
 
-      expect(jsonSchema.properties.count.default).toBe(10);
-      expect(jsonSchema.properties.name.default).toBe('unnamed');
+      expect(jsonSchema.properties?.count?.default).toBe(10);
+      expect(jsonSchema.properties?.name?.default).toBe('unnamed');
     });
   });
 
@@ -325,7 +329,7 @@ describe('Zod to JSON Schema Conversion', () => {
             })
             .optional(),
         }),
-        execute: async ({ query }) => ({ results: [] }),
+        execute: async (_input) => ({ results: [] }),
       });
 
       const schema = searchTool.jsonSchema;
@@ -334,7 +338,7 @@ describe('Zod to JSON Schema Conversion', () => {
       expect(schema.required).toContain('query');
       expect(schema.required).not.toContain('limit');
       expect(schema.required).not.toContain('filters');
-      expect(schema.properties.query.minLength).toBe(1);
+      expect(schema.properties?.query?.minLength).toBe(1);
     });
 
     it('should handle complex nested schema', () => {
@@ -359,9 +363,9 @@ describe('Zod to JSON Schema Conversion', () => {
 
       const schema = dataTool.jsonSchema;
 
-      expect(schema.properties.records.type).toBe('array');
-      expect(schema.properties.records.items.properties.id.format).toBe('uuid');
-      expect(schema.properties.options.properties.normalize.default).toBe(false);
+      expect(schema.properties?.records?.type).toBe('array');
+      expect(schema.properties?.records?.items?.properties?.id?.format).toBe('uuid');
+      expect(schema.properties?.options?.properties?.normalize?.default).toBe(false);
     });
   });
 

@@ -3,7 +3,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { z } from 'zod';
+import type { TextAdapter } from '../../llm/src/types';
+import type { Tool } from '../../tool/src/types';
 
 // Mock @seashore/llm
 vi.mock('@seashore/llm', () => ({
@@ -17,12 +18,12 @@ describe('@seashore/agent', () => {
 
   describe('createAgent', () => {
     it('should create an agent with correct properties', async () => {
-      const { createAgent } = await import('../src/create-agent.js');
+      const { createAgent } = await import('../src/create-agent');
 
       const agent = createAgent({
         name: 'TestAgent',
         systemPrompt: 'You are a test agent.',
-        model: { provider: 'openai', model: 'gpt-4o' },
+        model: { provider: 'openai', model: 'gpt-4o' } as unknown as TextAdapter,
         tools: [],
       });
 
@@ -36,21 +37,21 @@ describe('@seashore/agent', () => {
 
   describe('tool-executor', () => {
     it('should execute tool successfully', async () => {
-      const { executeTool } = await import('../src/tool-executor.js');
+      const { executeTool } = await import('../src/tool-executor');
 
       const mockTool = {
         name: 'test_tool',
         description: 'A test tool',
         jsonSchema: { type: 'object' as const, properties: {}, required: [] },
         needsApproval: false,
-        validate: () => true,
+        validate: (_input: unknown): _input is unknown => true,
         parse: (x: unknown) => x,
         execute: vi.fn().mockResolvedValue({
           success: true,
           data: { result: 'success' },
           durationMs: 10,
         }),
-      };
+      } as Tool<unknown, unknown>;
 
       const result = await executeTool(
         mockTool,
@@ -64,17 +65,17 @@ describe('@seashore/agent', () => {
     });
 
     it('should handle tool execution error', async () => {
-      const { executeTool } = await import('../src/tool-executor.js');
+      const { executeTool } = await import('../src/tool-executor');
 
       const mockTool = {
         name: 'failing_tool',
         description: 'A failing tool',
         jsonSchema: { type: 'object' as const, properties: {}, required: [] },
         needsApproval: false,
-        validate: () => true,
+        validate: (_input: unknown): _input is unknown => true,
         parse: (x: unknown) => x,
         execute: vi.fn().mockRejectedValue(new Error('Tool failed')),
-      };
+      } as Tool<unknown, unknown>;
 
       const result = await executeTool(
         mockTool,
@@ -87,7 +88,7 @@ describe('@seashore/agent', () => {
     });
 
     it('should format tool result correctly', async () => {
-      const { formatToolResult } = await import('../src/tool-executor.js');
+      const { formatToolResult } = await import('../src/tool-executor');
 
       const successResult = formatToolResult({
         id: '1',
@@ -109,7 +110,7 @@ describe('@seashore/agent', () => {
 
   describe('error-handler', () => {
     it('should identify retryable errors', async () => {
-      const { isRetryableError, AgentError } = await import('../src/error-handler.js');
+      const { isRetryableError, AgentError } = await import('../src/error-handler');
 
       // Retryable errors
       expect(isRetryableError(new AgentError('LLM failed', 'LLM_ERROR'))).toBe(true);
@@ -124,7 +125,7 @@ describe('@seashore/agent', () => {
     });
 
     it('should throw on abort', async () => {
-      const { checkAborted, AgentError } = await import('../src/error-handler.js');
+      const { checkAborted, AgentError } = await import('../src/error-handler');
 
       const controller = new AbortController();
       controller.abort();
@@ -135,7 +136,7 @@ describe('@seashore/agent', () => {
 
   describe('stream', () => {
     it('should create stream chunks', async () => {
-      const { StreamChunks } = await import('../src/stream.js');
+      const { StreamChunks } = await import('../src/stream');
 
       expect(StreamChunks.content('Hello').type).toBe('content');
       expect(StreamChunks.content('Hello').delta).toBe('Hello');
@@ -147,7 +148,7 @@ describe('@seashore/agent', () => {
     });
 
     it('should collect stream into result', async () => {
-      const { collectStream, StreamChunks } = await import('../src/stream.js');
+      const { collectStream, StreamChunks } = await import('../src/stream');
 
       async function* mockStream() {
         yield StreamChunks.content('Hello ');

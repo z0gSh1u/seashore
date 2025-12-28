@@ -8,21 +8,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { z } from 'zod';
 import { createAgent } from '../src/react-agent';
 import { defineTool } from '../../tool/src/define-tool';
-import type { TextAdapter, Message, TokenUsage, StreamChunk } from '../../llm/src/types';
-
-/**
- * Create a mock LLM adapter that returns predefined responses
- */
-function createMockAdapter(responses: MockResponse[]): TextAdapter {
-  let callIndex = 0;
-
-  // We return a TextAdapter-like object, but the actual chat function
-  // will be mocked separately
-  return {
-    provider: 'openai',
-    model: 'mock-gpt-4',
-  };
-}
+import type { TextAdapter, Message, StreamChunk } from '../../llm/src/types';
 
 interface MockResponse {
   content?: string;
@@ -37,11 +23,11 @@ interface MockResponse {
  * Mock responses storage - accessible across module scope
  */
 let mockResponses: MockResponse[] = [];
-let callIndex = 0;
+let mockCallIndex = 0;
 
 function setMockResponses(responses: MockResponse[]) {
   mockResponses = responses;
-  callIndex = 0;
+  mockCallIndex = 0;
 }
 
 /**
@@ -63,7 +49,7 @@ vi.mock('@seashore/llm', async (importOriginal) => {
       throw new Error('Agent execution was aborted');
     }
 
-    const response = mockResponses[callIndex++] ?? { content: 'No more responses' };
+    const response = mockResponses[mockCallIndex++] ?? { content: 'No more responses' };
 
     // Emit content if present
     if (response.content) {
@@ -113,7 +99,7 @@ describe('Agent Integration Tests', () => {
       const agent = createAgent({
         name: 'SimpleBot',
         systemPrompt: 'You are a helpful assistant.',
-        model: { provider: 'openai', model: 'gpt-4o' } as TextAdapter,
+        model: { provider: 'openai', model: 'gpt-4o' } as unknown as TextAdapter,
       });
 
       const result = await agent.run('Hello');
@@ -129,7 +115,7 @@ describe('Agent Integration Tests', () => {
       const agent = createAgent({
         name: 'GeoBot',
         systemPrompt: 'You are a geography expert.',
-        model: { provider: 'openai', model: 'gpt-4o' } as TextAdapter,
+        model: { provider: 'openai', model: 'gpt-4o' } as unknown as TextAdapter,
       });
 
       const result = await agent.run('What is the capital of France?');
@@ -187,7 +173,7 @@ describe('Agent Integration Tests', () => {
       const agent = createAgent({
         name: 'WeatherBot',
         systemPrompt: 'You are a weather assistant. Use the weather tool to answer questions.',
-        model: { provider: 'openai', model: 'gpt-4o' } as TextAdapter,
+        model: { provider: 'openai', model: 'gpt-4o' } as unknown as TextAdapter,
         tools: [weatherTool],
       });
 
@@ -231,7 +217,7 @@ describe('Agent Integration Tests', () => {
       const agent = createAgent({
         name: 'MathBot',
         systemPrompt: 'You are a math assistant.',
-        model: { provider: 'openai', model: 'gpt-4o' } as TextAdapter,
+        model: { provider: 'openai', model: 'gpt-4o' } as unknown as TextAdapter,
         tools: [calculatorTool],
       });
 
@@ -273,7 +259,7 @@ describe('Agent Integration Tests', () => {
       const agent = createAgent({
         name: 'ErrorBot',
         systemPrompt: 'You handle errors gracefully.',
-        model: { provider: 'openai', model: 'gpt-4o' } as TextAdapter,
+        model: { provider: 'openai', model: 'gpt-4o' } as unknown as TextAdapter,
         tools: [failingTool],
       });
 
@@ -292,7 +278,7 @@ describe('Agent Integration Tests', () => {
       const agent = createAgent({
         name: 'StreamBot',
         systemPrompt: 'You are a helpful assistant.',
-        model: { provider: 'openai', model: 'gpt-4o' } as TextAdapter,
+        model: { provider: 'openai', model: 'gpt-4o' } as unknown as TextAdapter,
       });
 
       const chunks: string[] = [];
@@ -323,7 +309,7 @@ describe('Agent Integration Tests', () => {
       const agent = createAgent({
         name: 'EchoBot',
         systemPrompt: 'You echo messages.',
-        model: { provider: 'openai', model: 'gpt-4o' } as TextAdapter,
+        model: { provider: 'openai', model: 'gpt-4o' } as unknown as TextAdapter,
         tools: [echoTool],
       });
 
@@ -363,7 +349,7 @@ describe('Agent Integration Tests', () => {
       const agent = createAgent({
         name: 'LoopBot',
         systemPrompt: 'You loop.',
-        model: { provider: 'openai', model: 'gpt-4o' } as TextAdapter,
+        model: { provider: 'openai', model: 'gpt-4o' } as unknown as TextAdapter,
         tools: [echoTool],
         maxIterations: 2,
       });
@@ -380,7 +366,7 @@ describe('Agent Integration Tests', () => {
       const agent = createAgent({
         name: 'AbortBot',
         systemPrompt: 'You can be aborted.',
-        model: { provider: 'openai', model: 'gpt-4o' } as TextAdapter,
+        model: { provider: 'openai', model: 'gpt-4o' } as unknown as TextAdapter,
       });
 
       const controller = new AbortController();
@@ -399,7 +385,7 @@ describe('Agent Integration Tests', () => {
         name: 'capture_context',
         description: 'Captures execution context',
         inputSchema: z.object({ value: z.string() }),
-        execute: async (input, context) => {
+        execute: async (_input, context) => {
           capturedContext = context;
           return { captured: true };
         },
@@ -415,7 +401,7 @@ describe('Agent Integration Tests', () => {
       const agent = createAgent({
         name: 'ContextBot',
         systemPrompt: 'You capture context.',
-        model: { provider: 'openai', model: 'gpt-4o' } as TextAdapter,
+        model: { provider: 'openai', model: 'gpt-4o' } as unknown as TextAdapter,
         tools: [contextTool],
       });
 
@@ -463,7 +449,7 @@ describe('Agent Integration Tests', () => {
       const agent = createAgent({
         name: 'WeatherAssistant',
         systemPrompt: '你是一个友好的天气助手。使用天气工具查询用户询问的城市天气，并用中文回复。',
-        model: { provider: 'openai', model: 'gpt-4o' } as TextAdapter,
+        model: { provider: 'openai', model: 'gpt-4o' } as unknown as TextAdapter,
         tools: [weatherTool],
       });
 

@@ -8,7 +8,7 @@ describe('@seashore/llm', () => {
   describe('adapters', () => {
     it('should export text adapters', async () => {
       const { createOpenAIAdapter, createAnthropicAdapter, createGeminiAdapter } = await import(
-        '../src/adapters.js'
+        '../src/adapters'
       );
 
       const openai = createOpenAIAdapter('gpt-4o');
@@ -25,7 +25,7 @@ describe('@seashore/llm', () => {
     });
 
     it('should export default models', async () => {
-      const { DEFAULT_MODELS } = await import('../src/adapters.js');
+      const { DEFAULT_MODELS } = await import('../src/adapters');
 
       expect(DEFAULT_MODELS.openai).toBe('gpt-4o');
       expect(DEFAULT_MODELS.anthropic).toBe('claude-3-5-sonnet-20241022');
@@ -39,7 +39,7 @@ describe('@seashore/llm', () => {
     });
 
     it('should create OpenAI embedding adapter', async () => {
-      const { openaiEmbed } = await import('../src/embedding.js');
+      const { openaiEmbed } = await import('../src/embedding');
 
       const adapter = openaiEmbed('text-embedding-3-large', 1024);
       expect(adapter.provider).toBe('openai');
@@ -48,7 +48,7 @@ describe('@seashore/llm', () => {
     });
 
     it('should create Gemini embedding adapter', async () => {
-      const { geminiEmbed } = await import('../src/embedding.js');
+      const { geminiEmbed } = await import('../src/embedding');
 
       const adapter = geminiEmbed('text-embedding-004');
       expect(adapter.provider).toBe('gemini');
@@ -56,7 +56,7 @@ describe('@seashore/llm', () => {
     });
 
     it('should throw error for missing API key', async () => {
-      const { generateEmbedding, openaiEmbed } = await import('../src/embedding.js');
+      const { generateEmbedding, openaiEmbed } = await import('../src/embedding');
 
       // Clear env var
       const originalEnv = process.env['OPENAI_API_KEY'];
@@ -78,7 +78,7 @@ describe('@seashore/llm', () => {
 
   describe('multimodal', () => {
     it('should create image adapters', async () => {
-      const { openaiImage, geminiImage } = await import('../src/multimodal.js');
+      const { openaiImage, geminiImage } = await import('../src/multimodal');
 
       const dalle = openaiImage('dall-e-3');
       expect(dalle.provider).toBe('openai');
@@ -90,7 +90,7 @@ describe('@seashore/llm', () => {
     });
 
     it('should create video adapter', async () => {
-      const { openaiVideo } = await import('../src/multimodal.js');
+      const { openaiVideo } = await import('../src/multimodal');
 
       const sora = openaiVideo('sora-2');
       expect(sora.provider).toBe('openai');
@@ -98,7 +98,7 @@ describe('@seashore/llm', () => {
     });
 
     it('should create transcription adapter', async () => {
-      const { openaiTranscription } = await import('../src/multimodal.js');
+      const { openaiTranscription } = await import('../src/multimodal');
 
       const whisper = openaiTranscription('whisper-1');
       expect(whisper.provider).toBe('openai');
@@ -106,7 +106,7 @@ describe('@seashore/llm', () => {
     });
 
     it('should create TTS adapters', async () => {
-      const { openaiTTS, geminiTTS } = await import('../src/multimodal.js');
+      const { openaiTTS, geminiTTS } = await import('../src/multimodal');
 
       const tts = openaiTTS('tts-1-hd');
       expect(tts.provider).toBe('openai');
@@ -120,7 +120,7 @@ describe('@seashore/llm', () => {
 
   describe('types', () => {
     it('should export all types', async () => {
-      const types = await import('../src/types.js');
+      const types = await import('../src/types');
 
       // Type definitions are compile-time only, but we can check the module loads
       expect(types).toBeDefined();
@@ -129,7 +129,7 @@ describe('@seashore/llm', () => {
 
   describe('index', () => {
     it('should export all public APIs', async () => {
-      const llm = await import('../src/index.js');
+      const llm = await import('../src/index');
 
       // Adapters
       expect(llm.createOpenAIAdapter).toBeDefined();
