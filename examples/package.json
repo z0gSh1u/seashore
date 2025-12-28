@@ -1,0 +1,30 @@
+{
+  "name": "seashore-examples",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Examples for Seashore Agent Framework",
+  "scripts": {
+    "basic-chat": "tsx basic-chat.ts",
+    "agent-with-tools": "tsx agent-with-tools.ts",
+    "streaming-response": "tsx streaming-response.ts",
+    "rag-knowledge-base": "tsx rag-knowledge-base.ts",
+    "workflow-chain": "tsx workflow-chain.ts",
+    "memory-persistence": "tsx memory-persistence.ts"
+  },
+  "dependencies": {
+    "@seashore/agent": "workspace:*",
+    "@seashore/llm": "workspace:*",
+    "@seashore/memory": "workspace:*",
+    "@seashore/rag": "workspace:*",
+    "@seashore/tool": "workspace:*",
+    "@seashore/vectordb": "workspace:*",
+    "@seashore/workflow": "workspace:*",
+    "dotenv": "^16.4.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.5"
+  }
+}
