@@ -6,9 +6,10 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 
 /**
  * These tests require a PostgreSQL database connection.
- * Set DATABASE_URL environment variable to run.
+ * Testcontainers automatically provides DATABASE_URL via globalSetup.
+ * In CI, DATABASE_URL is provided by the postgres service.
  */
-describe.skipIf(!process.env['DATABASE_URL'])('@seashore/storage integration', () => {
+describe('@seashore/storage integration', () => {
   let database: Awaited<ReturnType<typeof import('../src/database').createDatabase>>;
   let threadRepo: Awaited<
     ReturnType<typeof import('../src/repositories/thread').createThreadRepository>

@@ -6,6 +6,7 @@ export default defineConfig({
     environment: 'node',
     include: ['packages/**/__tests__/**/*.test.ts', 'packages/**/*.spec.ts'],
     exclude: ['node_modules', 'dist', '**/node_modules/**'],
+    globalSetup: ['./packages/storage/__tests__/setup/global-setup.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
@@ -19,7 +20,7 @@ export default defineConfig({
       },
     },
     testTimeout: 30000,
-    hookTimeout: 30000,
+    hookTimeout: 120000,
     typecheck: {
       enabled: true,
       tsconfig: './tsconfig.json',
