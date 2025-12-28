@@ -47,6 +47,7 @@ export {
   geminiText,
   chat,
   toStreamResponse,
+  createTextAdapter,
   createOpenAIAdapter,
   createAnthropicAdapter,
   createGeminiAdapter,

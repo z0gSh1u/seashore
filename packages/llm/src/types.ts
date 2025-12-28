@@ -131,12 +131,56 @@ export type AnyTextAdapter = TanstackAnyTextAdapter;
 export type Tool = TanstackTool<any, any, any>;
 
 /**
- * Simple text adapter config (for serialization/config)
+ * Base configuration shared by all providers
  */
-export interface TextAdapterConfig {
-  readonly provider: 'openai' | 'anthropic' | 'gemini';
+interface BaseAdapterConfig {
+  /**
+   * The model ID to use (e.g., 'gpt-4', 'claude-3-opus')
+   */
   readonly model: string;
+
+  /**
+   * API Key for the provider.
+   * If not provided, the adapter will attempt to load it from environment variables.
+   */
+  readonly apiKey?: string;
 }
+
+/**
+ * Configuration for OpenAI provider
+ */
+export interface OpenAIAdapterConfig extends BaseAdapterConfig {
+  readonly provider: 'openai';
+
+  /**
+   * Organization ID (optional)
+   */
+  readonly organization?: string;
+
+  /**
+   * Base URL for the API (e.g., for local proxies or compatible endpoints)
+   */
+  readonly baseURL?: string;
+}
+
+/**
+ * Configuration for Anthropic provider
+ */
+export interface AnthropicAdapterConfig extends BaseAdapterConfig {
+  readonly provider: 'anthropic';
+}
+
+/**
+ * Configuration for Gemini provider
+ */
+export interface GeminiAdapterConfig extends BaseAdapterConfig {
+  readonly provider: 'gemini';
+}
+
+/**
+ * Union of all supported adapter configurations
+ */
+export type TextAdapterConfig = OpenAIAdapterConfig | AnthropicAdapterConfig | GeminiAdapterConfig;
 
 /**
  * Image generation adapter interface
