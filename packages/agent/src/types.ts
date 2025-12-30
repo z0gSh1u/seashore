@@ -121,7 +121,7 @@ export interface AgentStreamChunk {
   readonly toolCall?: {
     readonly id: string;
     readonly name: string;
-    readonly arguments?: string;
+    readonly arguments?: unknown;
   };
 
   /** Tool result for 'tool-result' chunks */

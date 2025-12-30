@@ -15,7 +15,7 @@ async function main() {
   // 创建一个简单的 Agent
   const agent = createAgent({
     name: 'basic-assistant',
-    model: openaiText('gpt-5-mini', {
+    model: openaiText('gpt-5.1', {
       baseURL: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1',
       apiKey: process.env.OPENAI_API_KEY || '',
     }),

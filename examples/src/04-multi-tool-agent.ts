@@ -11,9 +11,22 @@ import { openaiText } from '@seashore/llm';
 import { defineTool } from '@seashore/tool';
 import { z } from 'zod';
 
+// These tool names might conflict:
+// apply_patch
+// code_interpreter
+// computer_use_preview
+// file_search
+// image_generation
+// local_shell
+// mcp
+// shell
+// web_search_preview
+// web_search
+// custom
+
 // 模拟搜索工具（实际应用中使用 serperTool）
 const searchTool = defineTool({
-  name: 'web_search',
+  name: 'search_web',
   description: '在互联网上搜索信息',
   inputSchema: z.object({
     query: z.string().describe('搜索关键词'),
@@ -80,7 +93,10 @@ async function main() {
   // 创建多工具 Agent
   const agent = createAgent({
     name: 'research-assistant',
-    model: openaiText('gpt-4o'),
+    model: openaiText('gpt-5.1', {
+      baseURL: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1',
+      apiKey: process.env.OPENAI_API_KEY || '',
+    }),
     systemPrompt: `你是一个研究助手。当用户询问某个话题时，你可以：
 1. 使用 web_search 工具搜索相关信息
 2. 使用 fetch_page_content 工具获取搜索结果中感兴趣页面的详细内容

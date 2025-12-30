@@ -73,10 +73,11 @@ export function createAgent<
   } = config;
 
   // Convert tools to LLM tool format
+  // @tanstack/ai expects inputSchema, not parameters
   const llmTools = tools.map((tool) => ({
     name: tool.name,
     description: tool.description,
-    parameters: tool.jsonSchema,
+    inputSchema: tool.jsonSchema,
   }));
 
   return {
@@ -193,7 +194,12 @@ export function createAgent<
             // Yield tool results and add to conversation
             for (const result of toolResults) {
               allToolCalls.push(result);
-              yield StreamChunks.toolResult(result.id, result.name, result.result);
+              yield StreamChunks.toolResult(
+                result.id,
+                result.name,
+                result.arguments,
+                result.result
+              );
 
               // Add tool response message
               conversationMessages.push({

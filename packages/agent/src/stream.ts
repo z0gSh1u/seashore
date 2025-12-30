@@ -95,10 +95,15 @@ export const StreamChunks = {
     };
   },
 
-  toolResult(id: string, name: string, result: ToolCallRecord['result']): AgentStreamChunk {
+  toolResult(
+    id: string,
+    name: string,
+    args: unknown,
+    result: ToolCallRecord['result']
+  ): AgentStreamChunk {
     return {
       type: 'tool-result',
-      toolCall: { id, name },
+      toolCall: { id, name, arguments: args },
       toolResult: result,
     };
   },

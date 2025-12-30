@@ -65,15 +65,18 @@ async function main() {
   // 创建带工具的 Agent
   const agent = createAgent({
     name: 'tool-assistant',
-    model: openaiText('gpt-4o'),
+    model: openaiText('gpt-5.1', {
+      baseURL: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1',
+      apiKey: process.env.OPENAI_API_KEY || '',
+    }),
     systemPrompt: '你是一个有用的助手，可以查询天气和进行数学计算。请用中文回答。',
     tools: [weatherTool, calculatorTool],
   });
 
   // 测试天气查询
   console.log('--- 天气查询测试 ---\n');
-  const weatherResult = await agent.run('北京今天天气怎么样？');
-  console.log('📝 User: 北京今天天气怎么样？');
+  const weatherResult = await agent.run('今天北京的天气怎么样？');
+  console.log('📝 User: 今天北京的天气怎么样？');
   console.log(`🤖 Agent: ${weatherResult.content}\n`);
 
   // 测试计算器

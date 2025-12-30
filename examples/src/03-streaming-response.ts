@@ -14,7 +14,10 @@ async function main() {
   // 创建 Agent
   const agent = createAgent({
     name: 'streaming-assistant',
-    model: openaiText('gpt-4o'),
+    model: openaiText('gpt-5.1', {
+      baseURL: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1',
+      apiKey: process.env.OPENAI_API_KEY || '',
+    }),
     systemPrompt: '你是一个讲故事的助手。请用生动的语言讲述故事。',
   });
 
