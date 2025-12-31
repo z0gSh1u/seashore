@@ -25,6 +25,13 @@ export type {
   ConditionNodeConfig,
   ParallelNodeConfig,
   CustomNodeConfig,
+  // Adapter types
+  LLMAdapter,
+  TextAdapter,
+  TextAdapterConfig,
+  OpenAIAdapterConfig,
+  AnthropicAdapterConfig,
+  GeminiAdapterConfig,
 } from './types';
 
 // Workflow factory

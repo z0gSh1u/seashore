@@ -34,3 +34,5 @@ pnpm-debug.log*
 # Misc
 *.tmp
 *.temp
+
+.rollup.cache/

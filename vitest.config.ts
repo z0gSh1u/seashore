@@ -1,4 +1,7 @@
 import { defineConfig } from 'vitest/config';
+import { resolve } from 'path';
+
+const rootDir = resolve(__dirname);
 
 export default defineConfig({
   test: {
@@ -28,20 +31,20 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@seashore/llm': './packages/llm/src',
-      '@seashore/tool': './packages/tool/src',
-      '@seashore/agent': './packages/agent/src',
-      '@seashore/storage': './packages/storage/src',
-      '@seashore/vectordb': './packages/vectordb/src',
-      '@seashore/rag': './packages/rag/src',
-      '@seashore/workflow': './packages/workflow/src',
-      '@seashore/memory': './packages/memory/src',
-      '@seashore/mcp': './packages/mcp/src',
-      '@seashore/genui': './packages/genui/src',
-      '@seashore/observability': './packages/observability/src',
-      '@seashore/evaluation': './packages/evaluation/src',
-      '@seashore/security': './packages/security/src',
-      '@seashore/deploy': './packages/deploy/src',
+      '@seashore/llm': resolve(rootDir, 'packages/llm/src'),
+      '@seashore/tool': resolve(rootDir, 'packages/tool/src'),
+      '@seashore/agent': resolve(rootDir, 'packages/agent/src'),
+      '@seashore/storage': resolve(rootDir, 'packages/storage/src'),
+      '@seashore/vectordb': resolve(rootDir, 'packages/vectordb/src'),
+      '@seashore/rag': resolve(rootDir, 'packages/rag/src'),
+      '@seashore/workflow': resolve(rootDir, 'packages/workflow/src'),
+      '@seashore/memory': resolve(rootDir, 'packages/memory/src'),
+      '@seashore/mcp': resolve(rootDir, 'packages/mcp/src'),
+      '@seashore/genui': resolve(rootDir, 'packages/genui/src'),
+      '@seashore/observability': resolve(rootDir, 'packages/observability/src'),
+      '@seashore/evaluation': resolve(rootDir, 'packages/evaluation/src'),
+      '@seashore/security': resolve(rootDir, 'packages/security/src'),
+      '@seashore/deploy': resolve(rootDir, 'packages/deploy/src'),
     },
   },
 });

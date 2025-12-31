@@ -4,19 +4,46 @@
  * 展示如何创建简单的两步工作流：
  * 1. 第一步：生成文章大纲
  * 2. 第二步：根据大纲生成正文
+ *
+ * 本示例同时展示两种 LLM Node 配置方式：
+ * - 方式 1: 使用 openaiText() 适配器（支持 baseURL、apiKey 等完整配置）
+ * - 方式 2: 使用简单配置对象（向后兼容，适合快速原型）
  */
 
 import 'dotenv/config';
 import { createWorkflow, createLLMNode, type WorkflowContext } from '@seashore/workflow';
+import { openaiText } from '@seashore/llm';
 
 async function main() {
   console.log('🤖 Example 05: Workflow Basic\n');
 
-  // 创建适配器对象（workflow 包需要 provider 属性）
-  const adapter = {
+  // ============================================================
+  // 方式 1: 使用 openaiText() 适配器（推荐用于生产环境）
+  // 支持完整的配置选项：baseURL、apiKey、organization 等
+  // ============================================================
+  const adapterWithFullConfig = openaiText('gpt-4o', {
+    // 可选：自定义 API 端点（用于代理、私有部署、兼容 API 等）
+    baseURL: process.env.OPENAI_API_BASE_URL, // 例如: 'https://your-proxy.com/v1'
+    // 可选：显式指定 API Key（默认从 OPENAI_API_KEY 环境变量读取）
+    apiKey: process.env.OPENAI_API_KEY,
+    // 可选：组织 ID
+    // organization: process.env.OPENAI_ORG_ID,
+  });
+
+  // ============================================================
+  // 方式 2: 使用简单配置对象（向后兼容）
+  // 适合快速原型，自动从环境变量读取 API Key
+  // ============================================================
+  const adapterSimple = {
     provider: 'openai' as const,
     model: 'gpt-4o',
+    // 也支持以下可选配置：
+    // baseURL: 'https://your-proxy.com/v1',
+    // apiKey: 'your-api-key',
   };
+
+  // 选择使用的适配器（本示例使用完整配置方式）
+  const adapter = adapterWithFullConfig;
 
   // 步骤 1：生成大纲
   const outlineNode = createLLMNode({
@@ -44,6 +71,19 @@ async function main() {
       ];
     },
   });
+
+  // ============================================================
+  // 高级用法：为不同节点使用不同的 API 配置
+  // 例如：使用不同团队的 API 配额
+  // ============================================================
+  // const teamAAdapter = openaiText('gpt-4o', { apiKey: process.env.TEAM_A_API_KEY });
+  // const teamBAdapter = openaiText('gpt-4o', { apiKey: process.env.TEAM_B_API_KEY });
+  //
+  // 或者使用本地部署的模型
+  // const localAdapter = openaiText('local-model', {
+  //   baseURL: 'http://localhost:1234/v1',
+  //   apiKey: 'not-needed',
+  // });
 
   // 创建工作流
   const workflow = createWorkflow({

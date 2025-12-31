@@ -5,14 +5,37 @@
  */
 
 import type { ZodSchema } from 'zod';
+import type {
+  TextAdapter,
+  TextAdapterConfig,
+  OpenAIAdapterConfig,
+  AnthropicAdapterConfig,
+  GeminiAdapterConfig,
+} from '@seashore/llm';
+
+// Re-export adapter types for convenience
+export type {
+  TextAdapter,
+  TextAdapterConfig,
+  OpenAIAdapterConfig,
+  AnthropicAdapterConfig,
+  GeminiAdapterConfig,
+};
 
 /**
- * Text adapter interface (compatible with @seashore/llm)
+ * LLM adapter type: supports both TextAdapter objects and configuration objects
+ *
+ * @example Using a TextAdapter
+ * ```typescript
+ * adapter: openaiText('gpt-4o', { baseURL: 'https://api.example.com/v1' })
+ * ```
+ *
+ * @example Using a config object (backward compatible)
+ * ```typescript
+ * adapter: { provider: 'openai', model: 'gpt-4o' }
+ * ```
  */
-export interface TextAdapter {
-  readonly provider: string;
-  readonly model: string;
-}
+export type LLMAdapter = TextAdapter | TextAdapterConfig;
 
 /**
  * Tool interface (compatible with @seashore/tool)
@@ -109,8 +132,14 @@ export interface LLMNodeConfig {
   /** Node name */
   readonly name: string;
 
-  /** LLM adapter */
-  readonly adapter: TextAdapter;
+  /**
+   * LLM adapter
+   *
+   * Supports two forms:
+   * 1. TextAdapter object (e.g., openaiText('gpt-4o', { baseURL, apiKey }))
+   * 2. Config object (e.g., { provider: 'openai', model: 'gpt-4o' })
+   */
+  readonly adapter: LLMAdapter;
 
   /** Static prompt or dynamic prompt function */
   readonly prompt?: string | ((input: unknown, ctx: WorkflowContext) => string | Promise<string>);

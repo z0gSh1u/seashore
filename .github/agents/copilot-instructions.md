@@ -9,6 +9,8 @@ Auto-generated from all feature plans. Last updated: 2025-12-25
 - TypeScript 5.x + `@tanstack/ai`, `@tanstack/ai-openai`, `@tanstack/ai-anthropic`, `@tanstack/ai-gemini` (004-llm-config-baseurl)
 - TypeScript 5.x, Node.js >= 20.0.0 + @seashore/* (workspace packages), @tanstack/ai-openai, zod (master)
 - N/A (示例中使用内存存储) (master)
+- TypeScript ^5.x + `@tanstack/ai`, `@tanstack/ai-openai`, `@tanstack/ai-anthropic`, `@tanstack/ai-gemini`, `zod ^3.x` (006-workflow-security-enhancements)
+- N/A（无持久化需求） (006-workflow-security-enhancements)
 
 - TypeScript 5.x, Node.js 20+ + `@tanstack/ai`, `@tanstack/ai-openai`, `@tanstack/ai-anthropic`, `@tanstack/ai-gemini`, `hono`, `drizzle-orm`, `zod` (001-agent-framework)
 
@@ -28,9 +30,9 @@ npm test; npm run lint
 TypeScript 5.x, Node.js 20+: Follow standard conventions
 
 ## Recent Changes
+- 006-workflow-security-enhancements: Added TypeScript ^5.x + `@tanstack/ai`, `@tanstack/ai-openai`, `@tanstack/ai-anthropic`, `@tanstack/ai-gemini`, `zod ^3.x`
 - 005-add-examples: Added examples for basic agent, agent with tools, etc
 - 004-llm-config-baseurl: Added TypeScript 5.x + `@tanstack/ai`, `@tanstack/ai-openai`, `@tanstack/ai-anthropic`, `@tanstack/ai-gemini`
-- 003-fix-test-types: Added TypeScript 5.x + Vitest 3.x, Zod 3.x, @tanstack/ai
 
 
 <!-- MANUAL ADDITIONS START -->
