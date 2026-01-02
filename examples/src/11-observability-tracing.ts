@@ -62,7 +62,10 @@ async function main() {
   // 5. 创建 Agent
   const agent = createAgent({
     name: 'traced-agent',
-    model: openaiText('gpt-4o'),
+    model: openaiText('gpt-5.1', {
+      baseURL: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1',
+      apiKey: process.env.OPENAI_API_KEY,
+    }),
     systemPrompt: '你是一个数学助手，可以帮助用户进行计算。',
     tools: [calculatorTool],
   });

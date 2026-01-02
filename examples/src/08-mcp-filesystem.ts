@@ -51,7 +51,10 @@ async function main() {
     // 3. 创建带 MCP 工具的 Agent
     const agent = createAgent({
       name: 'filesystem-agent',
-      model: openaiText('gpt-4o'),
+      model: openaiText('gpt-5.1', {
+        baseURL: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1',
+        apiKey: process.env.OPENAI_API_KEY || '',
+      }),
       systemPrompt: `你是一个文件系统助手。你可以使用以下工具操作文件：
 - fs_read_file: 读取文件内容
 - fs_list_directory: 列出目录内容

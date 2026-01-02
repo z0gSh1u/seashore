@@ -80,6 +80,7 @@ export class StdioTransport {
         cwd,
         env: { ...process.env, ...env },
         stdio: ['pipe', 'pipe', 'pipe'],
+        shell: process.platform === 'win32', // Use shell on Windows for .cmd scripts
       });
 
       // Handle process errors
@@ -120,13 +121,25 @@ export class StdioTransport {
         });
       }
 
-      // Initialize MCP protocol
-      this.initialize()
-        .then(() => {
-          this.connected = true;
-          resolve();
-        })
-        .catch(reject);
+      // Wait for process to be ready before initializing
+      // Use spawn event on Windows or nextTick on other platforms
+      const startInitialize = () => {
+        // Small delay to ensure stdio pipes are ready
+        setTimeout(() => {
+          this.initialize()
+            .then(() => {
+              this.connected = true;
+              resolve();
+            })
+            .catch(reject);
+        }, 100);
+      };
+
+      if (this.process.pid) {
+        startInitialize();
+      } else {
+        this.process.once('spawn', startInitialize);
+      }
     });
   }
 

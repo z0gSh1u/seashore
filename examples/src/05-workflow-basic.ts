@@ -21,11 +21,11 @@ async function main() {
   // 方式 1: 使用 openaiText() 适配器（推荐用于生产环境）
   // 支持完整的配置选项：baseURL、apiKey、organization 等
   // ============================================================
-  const adapterWithFullConfig = openaiText('gpt-4o', {
+  const adapterWithFullConfig = openaiText('gpt-5.1', {
     // 可选：自定义 API 端点（用于代理、私有部署、兼容 API 等）
-    baseURL: process.env.OPENAI_API_BASE_URL, // 例如: 'https://your-proxy.com/v1'
+    baseURL: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1',
     // 可选：显式指定 API Key（默认从 OPENAI_API_KEY 环境变量读取）
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: process.env.OPENAI_API_KEY || '',
     // 可选：组织 ID
     // organization: process.env.OPENAI_ORG_ID,
   });

@@ -20,10 +20,16 @@ import { openaiText } from '@seashore/llm';
 async function main() {
   console.log('📊 Example 10: Evaluation QA\n');
 
+  // LLM 配置：使用自定义的 baseURL 和 API key
+  const model = openaiText('gpt-5.1', {
+    baseURL: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1',
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
   // 创建要评估的 Agent
   const agent = createAgent({
     name: 'qa-agent',
-    model: openaiText('gpt-4o'),
+    model,
     systemPrompt: '你是一个知识问答助手。请简洁准确地回答问题。',
   });
 

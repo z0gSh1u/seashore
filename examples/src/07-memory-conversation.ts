@@ -25,7 +25,10 @@ async function main() {
   // 创建 Agent
   const agent = createAgent({
     name: agentId,
-    model: openaiText('gpt-4o'),
+    model: openaiText('gpt-5.1', {
+      baseURL: process.env.OPENAI_API_BASE_URL || 'https://api.openai.com/v1',
+      apiKey: process.env.OPENAI_API_KEY || '',
+    }),
     systemPrompt: '你是一个有记忆的助手。请根据对话历史给出连贯的回答。',
   });
 

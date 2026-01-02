@@ -1,0 +1,20 @@
+[book]
+title = "Seashore Documentation"
+authors = ["Seashore Contributors"]
+language = "en"
+multilingual = false
+src = "docs"
+
+[build]
+build-dir = "book"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+git-repository-url = "https://github.com/z0gSh1u/seashore"
+git-repository-icon = "fa-github"
+edit-url-template = "https://github.com/z0gSh1u/seashore/edit/master/docs/{path}"
+
+[output.html.search]
+enable = true
+use-boolean-and = true
