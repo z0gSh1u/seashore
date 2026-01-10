@@ -1,12 +1,18 @@
 /**
  * @seashore/workflow - LLM Node
  *
- * Node type for LLM operations with flexible adapter configuration
+ * Node type for LLM operations with streaming token support
  */
 
-import type { WorkflowNode, LLMNodeConfig, LLMAdapter, WorkflowContext } from '../types';
-import type { TextAdapter, TextAdapterConfig, ChatMessage } from '@seashore/llm';
-import { chat, createTextAdapter } from '@seashore/llm';
+import type {
+  WorkflowNode,
+  LLMNodeConfig,
+  WorkflowContext,
+  StreamingWorkflowContext,
+  OnTokenCallback,
+} from '../types';
+import type { ChatMessage } from '@seashore/llm';
+import { chat } from '@seashore/llm';
 import { NodeExecutionError } from '../error-handler';
 
 /**
@@ -36,42 +42,6 @@ export interface LLMNodeOutput {
 }
 
 /**
- * Type guard to check if an adapter is a TextAdapterConfig object
- *
- * @param adapter - The adapter to check
- * @returns True if the adapter is a TextAdapterConfig object
- */
-export function isTextAdapterConfig(adapter: unknown): adapter is TextAdapterConfig {
-  if (adapter === null || adapter === undefined) {
-    return false;
-  }
-  if (typeof adapter !== 'object') {
-    return false;
-  }
-  const obj = adapter as Record<string, unknown>;
-  const validProviders = ['openai', 'anthropic', 'gemini'];
-  return (
-    typeof obj.provider === 'string' &&
-    validProviders.includes(obj.provider) &&
-    typeof obj.model === 'string'
-  );
-}
-
-/**
- * Resolve adapter from LLMAdapter (TextAdapter or TextAdapterConfig)
- *
- * @param adapter - The adapter or config to resolve
- * @returns A resolved TextAdapter
- */
-function resolveAdapter(adapter: LLMAdapter): TextAdapter {
-  if (isTextAdapterConfig(adapter)) {
-    return createTextAdapter(adapter);
-  }
-  // Already a TextAdapter
-  return adapter as TextAdapter;
-}
-
-/**
  * Create an LLM node for chat completions
  *
  * @example
@@ -79,29 +49,21 @@ function resolveAdapter(adapter: LLMAdapter): TextAdapter {
  * import { createLLMNode } from '@seashore/workflow';
  * import { openaiText } from '@seashore/llm';
  *
- * // Using TextAdapter directly (full configuration)
  * const analyzeNode = createLLMNode({
  *   name: 'analyze',
- *   adapter: openaiText('gpt-4o', {
+ *   model: openaiText('gpt-4o', {
  *     baseURL: 'https://api.example.com/v1',
  *     apiKey: process.env.CUSTOM_API_KEY,
  *   }),
  *   systemPrompt: 'You are an analyzer.',
  *   prompt: 'Analyze this: {{input}}',
  * });
- *
- * // Using TextAdapterConfig (simpler configuration)
- * const summarizeNode = createLLMNode({
- *   name: 'summarize',
- *   adapter: { provider: 'openai', model: 'gpt-4o' },
- *   prompt: 'Summarize the analysis.',
- * });
  * ```
  */
 export function createLLMNode(config: LLMNodeConfig): WorkflowNode<unknown, LLMNodeOutput> {
   const {
     name,
-    adapter: adapterConfig,
+    model,
     prompt,
     messages: messagesBuilder,
     systemPrompt,
@@ -112,9 +74,6 @@ export function createLLMNode(config: LLMNodeConfig): WorkflowNode<unknown, LLMN
     // It should be configured in the adapter instead
     maxTokens: _maxTokens,
   } = config;
-
-  // Resolve adapter once at node creation time
-  const resolvedAdapter = resolveAdapter(adapterConfig);
 
   return {
     name,
@@ -146,7 +105,7 @@ export function createLLMNode(config: LLMNodeConfig): WorkflowNode<unknown, LLMN
       try {
         // Call the LLM using @tanstack/ai chat function
         const stream = chat({
-          adapter: resolvedAdapter,
+          adapter: model,
           messages: chatMessages,
           systemPrompts: systemPrompt ? [systemPrompt] : undefined,
           tools: tools as Parameters<typeof chat>[0]['tools'],
@@ -170,12 +129,23 @@ export function createLLMNode(config: LLMNodeConfig): WorkflowNode<unknown, LLMN
           result?: unknown;
         }> = [];
 
+        // Get token callback from streaming context if available
+        const onToken = (ctx as StreamingWorkflowContext).onToken;
+
         for await (const chunk of stream) {
           switch (chunk.type) {
             case 'content':
               // Content chunks contain delta text
               if (chunk.delta) {
                 content += chunk.delta;
+                // Call token callback if available
+                if (onToken) {
+                  onToken({
+                    nodeName: name,
+                    delta: chunk.delta,
+                    content,
+                  });
+                }
               }
               break;
 

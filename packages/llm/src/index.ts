@@ -40,6 +40,9 @@ export type {
   EmbeddingOptions,
 } from './types';
 
+// Constants
+export { OPENAI_DEFAULT_BASE_URL, GEMINI_DEFAULT_BASE_URL } from './types';
+
 // Utility functions
 export { isChatMessage, filterChatMessages } from './types';
 
@@ -58,7 +61,13 @@ export {
 } from './adapters';
 
 // Embedding adapters
-export { openaiEmbed, geminiEmbed, generateEmbedding, generateBatchEmbeddings } from './embedding';
+export {
+  openaiEmbed,
+  geminiEmbed,
+  generateEmbedding,
+  generateBatchEmbeddings,
+  type EmbeddingAdapterOptions,
+} from './embedding';
 
 // Multimodal adapters
 export {
@@ -77,6 +86,8 @@ export {
   openaiTTS,
   geminiTTS,
   generateSpeech,
+  // Types
+  type MultimodalAdapterOptions,
 } from './multimodal';
 
 // Stream utilities

@@ -10,13 +10,19 @@ import type { WorkflowContext, MutableWorkflowContext } from './types';
  * Create a new immutable workflow context
  */
 export function createWorkflowContext(initial: Partial<WorkflowContext> = {}): WorkflowContext {
+  const nodeOutputs = initial.nodeOutputs ?? {};
+
   return {
-    nodeOutputs: initial.nodeOutputs ?? {},
+    nodeOutputs,
     metadata: initial.metadata ?? {},
     currentNode: initial.currentNode,
     executionPath: initial.executionPath ?? [],
     loopState: initial.loopState,
     signal: initial.signal,
+
+    getNodeOutput<T = unknown>(nodeName: string): T | undefined {
+      return nodeOutputs[nodeName] as T | undefined;
+    },
   };
 }
 
@@ -73,13 +79,18 @@ export function createMutableWorkflowContext(
     },
 
     toContext(): WorkflowContext {
+      const frozenOutputs = { ...nodeOutputs };
       return {
-        nodeOutputs: { ...nodeOutputs },
+        nodeOutputs: frozenOutputs,
         metadata: { ...metadata },
         currentNode,
         executionPath: [...executionPath],
         loopState: loopState ? { ...loopState } : undefined,
         signal,
+
+        getNodeOutput<T = unknown>(nodeName: string): T | undefined {
+          return frozenOutputs[nodeName] as T | undefined;
+        },
       };
     },
   };
@@ -91,11 +102,22 @@ export function createMutableWorkflowContext(
  * Merge multiple contexts together
  */
 export function mergeContexts(...contexts: Partial<WorkflowContext>[]): WorkflowContext {
+  const nodeOutputs: Record<string, unknown> = {};
+  const metadata: Record<string, unknown> = {};
+  let executionPath: readonly string[] = [];
+  let signal: AbortSignal | undefined;
+  let currentNode: string | undefined;
+  let loopState: WorkflowContext['loopState'];
+
   const merged: WorkflowContext = {
-    nodeOutputs: {},
-    metadata: {},
-    executionPath: [],
-    signal: undefined,
+    nodeOutputs,
+    metadata,
+    executionPath,
+    signal,
+
+    getNodeOutput<T = unknown>(nodeName: string): T | undefined {
+      return nodeOutputs[nodeName] as T | undefined;
+    },
   };
 
   for (const ctx of contexts) {
@@ -120,13 +142,19 @@ export function mergeContexts(...contexts: Partial<WorkflowContext>[]): Workflow
  * Clone a context (deep copy)
  */
 export function cloneContext(ctx: WorkflowContext): WorkflowContext {
+  const nodeOutputs = JSON.parse(JSON.stringify(ctx.nodeOutputs));
+
   return {
-    nodeOutputs: JSON.parse(JSON.stringify(ctx.nodeOutputs)),
+    nodeOutputs,
     metadata: JSON.parse(JSON.stringify(ctx.metadata)),
     currentNode: ctx.currentNode,
     executionPath: ctx.executionPath ? [...ctx.executionPath] : [],
     loopState: ctx.loopState ? { ...ctx.loopState } : undefined,
     signal: ctx.signal,
+
+    getNodeOutput<T = unknown>(nodeName: string): T | undefined {
+      return nodeOutputs[nodeName] as T | undefined;
+    },
   };
 }
 
@@ -137,13 +165,19 @@ export function createChildContext(
   parent: WorkflowContext,
   overrides: Partial<WorkflowContext> = {}
 ): WorkflowContext {
+  const nodeOutputs = { ...parent.nodeOutputs, ...overrides.nodeOutputs };
+
   return {
-    nodeOutputs: { ...parent.nodeOutputs, ...overrides.nodeOutputs },
+    nodeOutputs,
     metadata: { ...parent.metadata, ...overrides.metadata },
     currentNode: overrides.currentNode ?? parent.currentNode,
     executionPath: overrides.executionPath ?? parent.executionPath,
     loopState: overrides.loopState ?? parent.loopState,
     signal: overrides.signal ?? parent.signal,
+
+    getNodeOutput<T = unknown>(nodeName: string): T | undefined {
+      return nodeOutputs[nodeName] as T | undefined;
+    },
   };
 }
 

@@ -3,18 +3,7 @@ title = "Seashore Documentation"
 authors = []
 language = "en"
 multilingual = false
-src = "docs"
-
-# Preprocessor for gettext translations
-# Comment this out when generating POT files, uncomment when building translations
-[preprocessor.gettext]
-after = ["links"]
+src = "source"
 
 [build]
 build-dir = "book"
-extra-watch-dirs = ["po"]
-
-[output.html]
-# Theme files are included in theme/index.hbs, so we don't need these
-# additional-css = ["theme/language-switcher.css"]
-# additional-js = ["theme/language-switcher.js"]

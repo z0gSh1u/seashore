@@ -17,6 +17,23 @@ import type {
   SpeechOptions,
   SpeechResult,
 } from './types';
+import { OPENAI_DEFAULT_BASE_URL, GEMINI_DEFAULT_BASE_URL } from './types';
+
+/**
+ * Options for configuring multimodal adapters
+ */
+export interface MultimodalAdapterOptions {
+  /**
+   * API Key for the provider.
+   * If not provided, the adapter will attempt to load it from environment variables.
+   */
+  readonly apiKey?: string;
+  /**
+   * Base URL for the API endpoint.
+   * Use this for local proxies, enterprise deployments, or compatible third-party APIs.
+   */
+  readonly baseURL?: string;
+}
 
 // ============================================================================
 // Image Adapters
@@ -24,21 +41,35 @@ import type {
 
 /**
  * Create an OpenAI image adapter (DALL-E)
+ * @param model Model name (default: 'dall-e-3')
+ * @param options Optional configuration for apiKey and baseURL
  */
-export function openaiImage(model: string = 'dall-e-3'): ImageAdapter {
+export function openaiImage(
+  model: string = 'dall-e-3',
+  options?: MultimodalAdapterOptions
+): ImageAdapter {
   return {
     provider: 'openai',
     model,
+    apiKey: options?.apiKey,
+    baseURL: options?.baseURL,
   };
 }
 
 /**
  * Create a Gemini image adapter (Imagen)
+ * @param model Model name (default: 'imagen-3.0-generate-002')
+ * @param options Optional configuration for apiKey and baseURL
  */
-export function geminiImage(model: string = 'imagen-3.0-generate-002'): ImageAdapter {
+export function geminiImage(
+  model: string = 'imagen-3.0-generate-002',
+  options?: MultimodalAdapterOptions
+): ImageAdapter {
   return {
     provider: 'gemini',
     model,
+    apiKey: options?.apiKey,
+    baseURL: options?.baseURL,
   };
 }
 
@@ -64,8 +95,9 @@ export async function generateImage(
 async function generateOpenAIImage(
   options: ImageGenerationOptions
 ): Promise<ImageGenerationResult> {
-  const apiKey = getEnvVar('OPENAI_API_KEY');
   const { adapter, prompt, size, quality, style, n, modelOptions } = options;
+  const apiKey = getApiKey(adapter.apiKey, 'OPENAI_API_KEY');
+  const url = buildOpenAIUrl(adapter.baseURL, '/images/generations');
 
   const body: Record<string, unknown> = {
     model: adapter.model,
@@ -80,7 +112,7 @@ async function generateOpenAIImage(
     body['style'] = style;
   }
 
-  const response = await fetch('https://api.openai.com/v1/images/generations', {
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -111,22 +143,20 @@ async function generateOpenAIImage(
 async function generateGeminiImage(
   options: ImageGenerationOptions
 ): Promise<ImageGenerationResult> {
-  const apiKey = getEnvVar('GOOGLE_API_KEY');
   const { adapter, prompt, modelOptions } = options;
+  const apiKey = getApiKey(adapter.apiKey, 'GOOGLE_API_KEY');
+  const url = buildGeminiUrl(adapter.baseURL, adapter.model, 'generateImages', apiKey);
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${adapter.model}:generateImages?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        prompt,
-        ...modelOptions,
-      }),
-    }
-  );
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt,
+      ...modelOptions,
+    }),
+  });
 
   if (!response.ok) {
     const error = await response.text();
@@ -150,11 +180,18 @@ async function generateGeminiImage(
 
 /**
  * Create an OpenAI video adapter (Sora)
+ * @param model Model name (default: 'sora-2')
+ * @param options Optional configuration for apiKey and baseURL
  */
-export function openaiVideo(model: string = 'sora-2'): VideoAdapter {
+export function openaiVideo(
+  model: string = 'sora-2',
+  options?: MultimodalAdapterOptions
+): VideoAdapter {
   return {
     provider: 'openai',
     model,
+    apiKey: options?.apiKey,
+    baseURL: options?.baseURL,
   };
 }
 
@@ -174,9 +211,10 @@ export async function generateVideo(options: {
     throw new Error(`Unsupported video provider: ${adapter.provider}`);
   }
 
-  const apiKey = getEnvVar('OPENAI_API_KEY');
+  const apiKey = getApiKey(adapter.apiKey, 'OPENAI_API_KEY');
+  const url = buildOpenAIUrl(adapter.baseURL, '/videos/generations');
 
-  const response = await fetch('https://api.openai.com/v1/videos/generations', {
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -205,11 +243,17 @@ export async function generateVideo(options: {
 
 /**
  * Check video generation job status
+ * @param jobId The job ID to check
+ * @param adapter Optional adapter to use for apiKey and baseURL configuration
  */
-export async function checkVideoStatus(jobId: string): Promise<VideoGenerationJob> {
-  const apiKey = getEnvVar('OPENAI_API_KEY');
+export async function checkVideoStatus(
+  jobId: string,
+  adapter?: VideoAdapter
+): Promise<VideoGenerationJob> {
+  const apiKey = getApiKey(adapter?.apiKey, 'OPENAI_API_KEY');
+  const url = buildOpenAIUrl(adapter?.baseURL, `/videos/generations/${jobId}`);
 
-  const response = await fetch(`https://api.openai.com/v1/videos/generations/${jobId}`, {
+  const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${apiKey}`,
     },
@@ -241,11 +285,18 @@ export async function checkVideoStatus(jobId: string): Promise<VideoGenerationJo
 
 /**
  * Create an OpenAI transcription adapter (Whisper)
+ * @param model Model name (default: 'whisper-1')
+ * @param options Optional configuration for apiKey and baseURL
  */
-export function openaiTranscription(model: string = 'whisper-1'): TranscriptionAdapter {
+export function openaiTranscription(
+  model: string = 'whisper-1',
+  options?: MultimodalAdapterOptions
+): TranscriptionAdapter {
   return {
     provider: 'openai',
     model,
+    apiKey: options?.apiKey,
+    baseURL: options?.baseURL,
   };
 }
 
@@ -261,7 +312,8 @@ export async function generateTranscription(
     throw new Error(`Unsupported transcription provider: ${adapter.provider}`);
   }
 
-  const apiKey = getEnvVar('OPENAI_API_KEY');
+  const apiKey = getApiKey(adapter.apiKey, 'OPENAI_API_KEY');
+  const url = buildOpenAIUrl(adapter.baseURL, '/audio/transcriptions');
 
   const formData = new FormData();
   formData.append('file', audio);
@@ -279,7 +331,7 @@ export async function generateTranscription(
   const responseFormat = modelOptions?.['response_format'] ?? 'json';
   formData.append('response_format', responseFormat as string);
 
-  const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -313,21 +365,32 @@ export async function generateTranscription(
 
 /**
  * Create an OpenAI TTS adapter
+ * @param model Model name (default: 'tts-1')
+ * @param options Optional configuration for apiKey and baseURL
  */
-export function openaiTTS(model: string = 'tts-1'): TTSAdapter {
+export function openaiTTS(model: string = 'tts-1', options?: MultimodalAdapterOptions): TTSAdapter {
   return {
     provider: 'openai',
     model,
+    apiKey: options?.apiKey,
+    baseURL: options?.baseURL,
   };
 }
 
 /**
  * Create a Gemini TTS adapter
+ * @param model Model name (default: 'gemini-2.0-flash')
+ * @param options Optional configuration for apiKey and baseURL
  */
-export function geminiTTS(model: string = 'gemini-2.0-flash'): TTSAdapter {
+export function geminiTTS(
+  model: string = 'gemini-2.0-flash',
+  options?: MultimodalAdapterOptions
+): TTSAdapter {
   return {
     provider: 'gemini',
     model,
+    apiKey: options?.apiKey,
+    baseURL: options?.baseURL,
   };
 }
 
@@ -349,10 +412,11 @@ export async function generateSpeech(options: SpeechOptions): Promise<SpeechResu
 
 // OpenAI TTS implementation
 async function generateOpenAISpeech(options: SpeechOptions): Promise<SpeechResult> {
-  const apiKey = getEnvVar('OPENAI_API_KEY');
   const { adapter, text, voice, speed, format } = options;
+  const apiKey = getApiKey(adapter.apiKey, 'OPENAI_API_KEY');
+  const url = buildOpenAIUrl(adapter.baseURL, '/audio/speech');
 
-  const response = await fetch('https://api.openai.com/v1/audio/speech', {
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -383,31 +447,29 @@ async function generateOpenAISpeech(options: SpeechOptions): Promise<SpeechResul
 
 // Gemini TTS implementation (experimental)
 async function generateGeminiSpeech(options: SpeechOptions): Promise<SpeechResult> {
-  const apiKey = getEnvVar('GOOGLE_API_KEY');
   const { adapter, text, voice } = options;
+  const apiKey = getApiKey(adapter.apiKey, 'GOOGLE_API_KEY');
+  const url = buildGeminiUrl(adapter.baseURL, adapter.model, 'generateContent', apiKey);
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${adapter.model}:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text }] }],
-        generationConfig: {
-          response_modalities: ['AUDIO'],
-          speech_config: {
-            voice_config: {
-              prebuilt_voice_config: {
-                voice_name: voice ?? 'Aoede',
-              },
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text }] }],
+      generationConfig: {
+        response_modalities: ['AUDIO'],
+        speech_config: {
+          voice_config: {
+            prebuilt_voice_config: {
+              voice_name: voice ?? 'Aoede',
             },
           },
         },
-      }),
-    }
-  );
+      },
+    }),
+  });
 
   if (!response.ok) {
     const error = await response.text();
@@ -436,6 +498,41 @@ function getEnvVar(name: string): string {
     throw new Error(`Missing required environment variable: ${name}`);
   }
   return value;
+}
+
+/**
+ * Get API key with priority: adapter config > environment variable
+ */
+function getApiKey(adapterApiKey: string | undefined, envVarName: string): string {
+  if (adapterApiKey !== undefined && adapterApiKey !== '') {
+    return adapterApiKey;
+  }
+  return getEnvVar(envVarName);
+}
+
+/**
+ * Build the full API URL for OpenAI endpoints
+ */
+function buildOpenAIUrl(baseURL: string | undefined, path: string): string {
+  const base = baseURL ?? OPENAI_DEFAULT_BASE_URL;
+  // Remove trailing slash from base and leading slash from path for clean concatenation
+  const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return `${cleanBase}${cleanPath}`;
+}
+
+/**
+ * Build the full API URL for Gemini endpoints
+ */
+function buildGeminiUrl(
+  baseURL: string | undefined,
+  model: string,
+  action: string,
+  apiKey: string
+): string {
+  const base = baseURL ?? GEMINI_DEFAULT_BASE_URL;
+  const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  return `${cleanBase}/models/${model}:${action}?key=${apiKey}`;
 }
 
 // Response types

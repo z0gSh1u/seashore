@@ -10,18 +10,38 @@ import type {
   EmbeddingResult,
   BatchEmbeddingResult,
 } from './types';
+import { OPENAI_DEFAULT_BASE_URL, GEMINI_DEFAULT_BASE_URL } from './types';
+
+/**
+ * Options for configuring embedding adapters
+ */
+export interface EmbeddingAdapterOptions {
+  /**
+   * API Key for the provider.
+   * If not provided, the adapter will attempt to load it from environment variables.
+   */
+  readonly apiKey?: string;
+  /**
+   * Base URL for the API endpoint.
+   * Use this for local proxies, enterprise deployments, or compatible third-party APIs.
+   */
+  readonly baseURL?: string;
+}
 
 /**
  * Create an OpenAI embedding adapter
  */
 export function openaiEmbed(
   model: string = 'text-embedding-3-small',
-  dimensions?: number
+  dimensions?: number,
+  options?: EmbeddingAdapterOptions
 ): EmbeddingAdapter {
   return {
     provider: 'openai',
     model,
     dimensions,
+    apiKey: options?.apiKey,
+    baseURL: options?.baseURL,
   };
 }
 
@@ -30,12 +50,15 @@ export function openaiEmbed(
  */
 export function geminiEmbed(
   model: string = 'text-embedding-004',
-  dimensions?: number
+  dimensions?: number,
+  options?: EmbeddingAdapterOptions
 ): EmbeddingAdapter {
   return {
     provider: 'gemini',
     model,
     dimensions,
+    apiKey: options?.apiKey,
+    baseURL: options?.baseURL,
   };
 }
 
@@ -84,7 +107,7 @@ async function generateOpenAIEmbedding(
   adapter: EmbeddingAdapter,
   text: string
 ): Promise<EmbeddingResult> {
-  const apiKey = getEnvVar('OPENAI_API_KEY');
+  const apiKey = getApiKey(adapter.apiKey, 'OPENAI_API_KEY');
 
   const body: Record<string, unknown> = {
     model: adapter.model,
@@ -95,7 +118,8 @@ async function generateOpenAIEmbedding(
     body['dimensions'] = adapter.dimensions;
   }
 
-  const response = await fetch('https://api.openai.com/v1/embeddings', {
+  const url = buildOpenAIUrl(adapter.baseURL, '/embeddings');
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -130,7 +154,7 @@ async function generateOpenAIBatchEmbeddings(
   adapter: EmbeddingAdapter,
   texts: readonly string[]
 ): Promise<BatchEmbeddingResult> {
-  const apiKey = getEnvVar('OPENAI_API_KEY');
+  const apiKey = getApiKey(adapter.apiKey, 'OPENAI_API_KEY');
 
   const body: Record<string, unknown> = {
     model: adapter.model,
@@ -141,7 +165,8 @@ async function generateOpenAIBatchEmbeddings(
     body['dimensions'] = adapter.dimensions;
   }
 
-  const response = await fetch('https://api.openai.com/v1/embeddings', {
+  const url = buildOpenAIUrl(adapter.baseURL, '/embeddings');
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -176,24 +201,22 @@ async function generateGeminiEmbedding(
   adapter: EmbeddingAdapter,
   text: string
 ): Promise<EmbeddingResult> {
-  const apiKey = getEnvVar('GOOGLE_API_KEY');
+  const apiKey = getApiKey(adapter.apiKey, 'GOOGLE_API_KEY');
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${adapter.model}:embedContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+  const url = buildGeminiUrl(adapter.baseURL, adapter.model, 'embedContent', apiKey);
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: `models/${adapter.model}`,
+      content: {
+        parts: [{ text }],
       },
-      body: JSON.stringify({
-        model: `models/${adapter.model}`,
-        content: {
-          parts: [{ text }],
-        },
-        outputDimensionality: adapter.dimensions,
-      }),
-    }
-  );
+      outputDimensionality: adapter.dimensions,
+    }),
+  });
 
   if (!response.ok) {
     const error = await response.text();
@@ -212,7 +235,7 @@ async function generateGeminiBatchEmbeddings(
   adapter: EmbeddingAdapter,
   texts: readonly string[]
 ): Promise<BatchEmbeddingResult> {
-  const apiKey = getEnvVar('GOOGLE_API_KEY');
+  const apiKey = getApiKey(adapter.apiKey, 'GOOGLE_API_KEY');
 
   const requests = texts.map((text) => ({
     model: `models/${adapter.model}`,
@@ -222,16 +245,14 @@ async function generateGeminiBatchEmbeddings(
     outputDimensionality: adapter.dimensions,
   }));
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${adapter.model}:batchEmbedContents?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ requests }),
-    }
-  );
+  const url = buildGeminiUrl(adapter.baseURL, adapter.model, 'batchEmbedContents', apiKey);
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ requests }),
+  });
 
   if (!response.ok) {
     const error = await response.text();
@@ -253,6 +274,41 @@ function getEnvVar(name: string): string {
     throw new Error(`Missing required environment variable: ${name}`);
   }
   return value;
+}
+
+/**
+ * Get API key with priority: adapter config > environment variable
+ */
+function getApiKey(adapterApiKey: string | undefined, envVarName: string): string {
+  if (adapterApiKey !== undefined && adapterApiKey !== '') {
+    return adapterApiKey;
+  }
+  return getEnvVar(envVarName);
+}
+
+/**
+ * Build the full API URL for OpenAI endpoints
+ */
+function buildOpenAIUrl(baseURL: string | undefined, path: string): string {
+  const base = baseURL ?? OPENAI_DEFAULT_BASE_URL;
+  // Remove trailing slash from base and leading slash from path for clean concatenation
+  const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return `${cleanBase}${cleanPath}`;
+}
+
+/**
+ * Build the full API URL for Gemini endpoints
+ */
+function buildGeminiUrl(
+  baseURL: string | undefined,
+  model: string,
+  action: string,
+  apiKey: string
+): string {
+  const base = baseURL ?? GEMINI_DEFAULT_BASE_URL;
+  const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  return `${cleanBase}/models/${model}:${action}?key=${apiKey}`;
 }
 
 // Response types

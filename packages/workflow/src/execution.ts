@@ -1,7 +1,7 @@
 /**
  * @seashore/workflow - Execution Engine
  *
- * Core workflow execution logic
+ * Core workflow execution logic with token-level streaming support
  */
 
 import type {
@@ -13,6 +13,8 @@ import type {
   WorkflowEvent,
   WorkflowExecutionOptions,
   WorkflowExecutionResult,
+  StreamingWorkflowContext,
+  LLMTokenEventData,
 } from './types';
 import { createMutableWorkflowContext } from './context';
 
@@ -305,12 +307,18 @@ export async function executeWorkflow<TInput = unknown, TOutput = unknown>(
       data: { output: currentOutput },
     });
 
+    const nodeOutputs = { ...mutableContext.nodeOutputs };
+
     return {
       output: currentOutput as TOutput,
-      nodeOutputs: { ...mutableContext.nodeOutputs },
+      nodeOutputs,
       nodeExecutionOrder,
       durationMs: Date.now() - startTime,
       context: mutableContext.toContext(),
+
+      getNodeOutput<T = unknown>(nodeName: string): T | undefined {
+        return nodeOutputs[nodeName] as T | undefined;
+      },
     };
   } catch (error) {
     // Emit workflow error event
@@ -338,28 +346,266 @@ export async function executeWorkflow<TInput = unknown, TOutput = unknown>(
 }
 
 /**
- * Execute a workflow with streaming events
+ * Execute a workflow with true streaming events (including token-level streaming)
+ *
+ * This function yields events in real-time as they occur, including:
+ * - workflow_start / workflow_complete / workflow_error
+ * - node_start / node_complete / node_error
+ * - llm_token (for LLM nodes, yields each token as it's generated)
  */
 export async function* executeWorkflowStream<TInput = unknown, TOutput = unknown>(
   workflow: Workflow<TInput, TOutput>,
   input: TInput,
   options: Omit<WorkflowExecutionOptions, 'onEvent'> = {}
 ): AsyncGenerator<WorkflowEvent, WorkflowExecutionResult<TOutput>, undefined> {
-  const events: WorkflowEvent[] = [];
+  const { signal, timeout, maxIterations = 1000 } = options;
+  const config = workflow.config;
+  const startTime = Date.now();
 
-  const result = await executeWorkflow(workflow, input, {
-    ...options,
-    onEvent: (event) => {
-      events.push(event);
+  // Event queue for async yielding
+  const eventQueue: WorkflowEvent[] = [];
+  let resolveNextEvent: (() => void) | null = null;
+
+  // Push event to queue and notify
+  const pushEvent = (event: WorkflowEvent) => {
+    eventQueue.push(event);
+    if (resolveNextEvent) {
+      resolveNextEvent();
+      resolveNextEvent = null;
+    }
+  };
+
+  // Wait for next event
+  const waitForEvent = (): Promise<void> => {
+    if (eventQueue.length > 0) {
+      return Promise.resolve();
+    }
+    return new Promise((resolve) => {
+      resolveNextEvent = resolve;
+    });
+  };
+
+  // Create mutable context
+  const mutableContext = createMutableWorkflowContext({
+    nodeOutputs: {},
+    metadata: {
+      startTime,
+      workflowName: config.name,
+      ...options.metadata,
     },
+    signal,
   });
 
-  // Yield all collected events
-  for (const event of events) {
-    yield event;
+  // Track execution state
+  const nodeExecutionOrder: string[] = [];
+  let currentOutput: unknown = input;
+  let executionError: Error | null = null;
+  let executionComplete = false;
+
+  // Start async execution
+  const executionPromise = (async () => {
+    try {
+      // Emit workflow start event
+      pushEvent({
+        type: 'workflow_start',
+        timestamp: Date.now(),
+        data: { input },
+      });
+
+      // Get the start node
+      let currentNodes = [getStartNode(config)];
+      let iterations = 0;
+
+      while (currentNodes.length > 0 && iterations < maxIterations) {
+        iterations++;
+
+        // Check for abort
+        if (signal?.aborted) {
+          throw new WorkflowAbortError('Workflow execution aborted', mutableContext.toContext());
+        }
+
+        // Check for timeout
+        if (timeout && Date.now() - startTime > timeout) {
+          throw new WorkflowTimeoutError(
+            'Workflow execution timed out',
+            undefined,
+            mutableContext.toContext()
+          );
+        }
+
+        // Execute current nodes
+        for (const node of currentNodes) {
+          const nodeInput = mutableContext.getNodeOutput(node.name + '_input') ?? currentOutput;
+
+          // Emit node start event
+          pushEvent({
+            type: 'node_start',
+            timestamp: Date.now(),
+            data: { nodeName: node.name, input: nodeInput },
+          });
+
+          try {
+            // Create streaming context with token callback
+            const baseCtx = mutableContext.toContext();
+            const streamingCtx: StreamingWorkflowContext = {
+              ...baseCtx,
+              currentNode: node.name,
+              onToken: (tokenData: LLMTokenEventData) => {
+                pushEvent({
+                  type: 'llm_token',
+                  timestamp: Date.now(),
+                  data: tokenData as unknown as Record<string, unknown>,
+                });
+              },
+            };
+
+            const output = await executeNode(
+              node,
+              nodeInput,
+              streamingCtx,
+              timeout ? timeout - (Date.now() - startTime) : undefined
+            );
+
+            // Store output in context
+            mutableContext.setNodeOutput(node.name, output);
+            mutableContext.executionPath.push(node.name);
+            nodeExecutionOrder.push(node.name);
+            currentOutput = output;
+
+            // Emit node complete event
+            pushEvent({
+              type: 'node_complete',
+              timestamp: Date.now(),
+              data: { nodeName: node.name, output },
+            });
+          } catch (error) {
+            // Emit node error event
+            pushEvent({
+              type: 'node_error',
+              timestamp: Date.now(),
+              data: { nodeName: node.name, error },
+            });
+
+            throw error;
+          }
+        }
+
+        // Find next nodes to execute
+        const nextNodesSet = new Set<WorkflowNode>();
+        for (const executedNode of currentNodes) {
+          const nextNodes = await findNextNodesAsync(
+            executedNode.name,
+            config,
+            mutableContext.toContext()
+          );
+          for (const n of nextNodes) {
+            nextNodesSet.add(n);
+          }
+        }
+
+        currentNodes = Array.from(nextNodesSet);
+      }
+
+      // Emit workflow complete event
+      pushEvent({
+        type: 'workflow_complete',
+        timestamp: Date.now(),
+        data: { output: currentOutput },
+      });
+    } catch (error) {
+      executionError = error as Error;
+
+      // Emit workflow error event
+      pushEvent({
+        type: 'workflow_error',
+        timestamp: Date.now(),
+        data: { error },
+      });
+    } finally {
+      executionComplete = true;
+      // Push a null to signal completion
+      if (resolveNextEvent) {
+        resolveNextEvent();
+        resolveNextEvent = null;
+      }
+    }
+  })();
+
+  // Yield events as they arrive
+  while (!executionComplete || eventQueue.length > 0) {
+    if (eventQueue.length === 0) {
+      await waitForEvent();
+    }
+
+    while (eventQueue.length > 0) {
+      const event = eventQueue.shift()!;
+      yield event;
+    }
   }
 
-  return result;
+  // Wait for execution to fully complete
+  await executionPromise;
+
+  // Throw error if execution failed
+  if (executionError) {
+    if (
+      executionError instanceof WorkflowExecutionError ||
+      executionError instanceof WorkflowAbortError ||
+      executionError instanceof WorkflowTimeoutError
+    ) {
+      throw executionError;
+    }
+
+    throw new WorkflowExecutionError(
+      executionError.message,
+      mutableContext.currentNode || 'unknown',
+      executionError,
+      mutableContext.toContext()
+    );
+  }
+
+  const nodeOutputs = { ...mutableContext.nodeOutputs };
+
+  return {
+    output: currentOutput as TOutput,
+    nodeOutputs,
+    nodeExecutionOrder,
+    durationMs: Date.now() - startTime,
+    context: mutableContext.toContext(),
+
+    getNodeOutput<T = unknown>(nodeName: string): T | undefined {
+      return nodeOutputs[nodeName] as T | undefined;
+    },
+  };
+}
+
+/**
+ * Helper to find next nodes with async condition evaluation
+ */
+async function findNextNodesAsync(
+  nodeName: string,
+  config: WorkflowConfig,
+  context: WorkflowContext
+): Promise<WorkflowNode[]> {
+  const edges = config.edges.filter((e) => e.from === nodeName);
+  const nextNodes: WorkflowNode[] = [];
+
+  for (const edge of edges) {
+    // Check condition if present
+    if (edge.condition) {
+      const shouldFollow = await Promise.resolve(edge.condition(context));
+      if (!shouldFollow) {
+        continue;
+      }
+    }
+
+    const node = config.nodes.find((n) => n.name === edge.to);
+    if (node) {
+      nextNodes.push(node);
+    }
+  }
+
+  return nextNodes;
 }
 
 /**

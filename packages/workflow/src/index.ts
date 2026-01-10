@@ -18,6 +18,10 @@ export type {
   WorkflowExecutionOptions,
   WorkflowEvent,
   WorkflowEventType,
+  // Streaming types
+  StreamingWorkflowContext,
+  LLMTokenEventData,
+  OnTokenCallback,
   // Node configs
   NodeType,
   LLMNodeConfig,
@@ -26,12 +30,7 @@ export type {
   ParallelNodeConfig,
   CustomNodeConfig,
   // Adapter types
-  LLMAdapter,
   TextAdapter,
-  TextAdapterConfig,
-  OpenAIAdapterConfig,
-  AnthropicAdapterConfig,
-  GeminiAdapterConfig,
 } from './types';
 
 // Workflow factory

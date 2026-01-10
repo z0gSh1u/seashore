@@ -4,20 +4,6 @@
   "private": true,
   "type": "module",
   "description": "Runnable examples for Seashore Agent Framework",
-  "scripts": {
-    "01-basic-agent": "tsx src/01-basic-agent.ts",
-    "02-agent-with-tools": "tsx src/02-agent-with-tools.ts",
-    "03-streaming-response": "tsx src/03-streaming-response.ts",
-    "04-multi-tool-agent": "tsx src/04-multi-tool-agent.ts",
-    "05-workflow-basic": "tsx src/05-workflow-basic.ts",
-    "06-rag-knowledge-base": "tsx src/06-rag-knowledge-base.ts",
-    "07-memory-conversation": "tsx src/07-memory-conversation.ts",
-    "08-mcp-filesystem": "tsx src/08-mcp-filesystem.ts",
-    "09-security-guardrails": "tsx src/09-security-guardrails.ts",
-    "10-evaluation-qa": "tsx src/10-evaluation-qa.ts",
-    "11-observability-tracing": "tsx src/11-observability-tracing.ts",
-    "12-deploy-api-server": "tsx src/12-deploy-api-server.ts"
-  },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
     "@seashore/agent": "workspace:*",
