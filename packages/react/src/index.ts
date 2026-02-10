@@ -1,0 +1,2 @@
+// @seashore/react
+export {}

@@ -1,0 +1,2 @@
+// @seashore/platform
+export {}
