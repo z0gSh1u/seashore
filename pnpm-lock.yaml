@@ -56,6 +56,9 @@ importers:
       '@seashore/core':
         specifier: workspace:*
         version: link:../core
+      '@tanstack/ai':
+        specifier: ^0.4.0
+        version: 0.4.2
       zod:
         specifier: ^3.24.1
         version: 3.25.76
