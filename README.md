@@ -2,6 +2,8 @@
 
 **A TypeScript-first AI agent framework built on TanStack AI**
 
+English | [简体中文](README.zh-CN.md)\*\*
+
 Seashore provides a modular, type-safe foundation for building production AI agents with workflow orchestration, RAG capabilities, and deployment infrastructure.
 
 [![Version](https://img.shields.io/npm/v/@seashore/core.svg)](https://www.npmjs.com/package/@seashore/core)
@@ -20,13 +22,13 @@ Seashore provides a modular, type-safe foundation for building production AI age
 
 ## Packages
 
-| Package | Description | Version |
-|---------|-------------|---------|
-| [@seashore/core](./packages/core) | LLM adapters, embeddings, tools, context | [![npm](https://img.shields.io/npm/v/@seashore/core.svg)](https://www.npmjs.com/package/@seashore/core) |
-| [@seashore/agent](./packages/agent) | ReAct agents and DAG workflows | [![npm](https://img.shields.io/npm/v/@seashore/agent.svg)](https://www.npmjs.com/package/@seashore/agent) |
-| [@seashore/data](./packages/data) | PostgreSQL storage, pgvector, RAG | [![npm](https://img.shields.io/npm/v/@seashore/data.svg)](https://www.npmjs.com/package/@seashore/data) |
-| [@seashore/platform](./packages/platform) | MCP, guardrails, eval, deployment | [![npm](https://img.shields.io/npm/v/@seashore/platform.svg)](https://www.npmjs.com/package/@seashore/platform) |
-| [@seashore/react](./packages/react) | React hooks for streaming chat | [![npm](https://img.shields.io/npm/v/@seashore/react.svg)](https://www.npmjs.com/package/@seashore/react) |
+| Package                                   | Description                              | Version                                                                                                         |
+| ----------------------------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| [@seashore/core](./packages/core)         | LLM adapters, embeddings, tools, context | [![npm](https://img.shields.io/npm/v/@seashore/core.svg)](https://www.npmjs.com/package/@seashore/core)         |
+| [@seashore/agent](./packages/agent)       | ReAct agents and DAG workflows           | [![npm](https://img.shields.io/npm/v/@seashore/agent.svg)](https://www.npmjs.com/package/@seashore/agent)       |
+| [@seashore/data](./packages/data)         | PostgreSQL storage, pgvector, RAG        | [![npm](https://img.shields.io/npm/v/@seashore/data.svg)](https://www.npmjs.com/package/@seashore/data)         |
+| [@seashore/platform](./packages/platform) | MCP, guardrails, eval, deployment        | [![npm](https://img.shields.io/npm/v/@seashore/platform.svg)](https://www.npmjs.com/package/@seashore/platform) |
+| [@seashore/react](./packages/react)       | React hooks for streaming chat           | [![npm](https://img.shields.io/npm/v/@seashore/react.svg)](https://www.npmjs.com/package/@seashore/react)       |
 
 ## Quick Start
 
@@ -49,20 +51,20 @@ npm install @seashore/react
 ### Basic ReAct Agent
 
 ```typescript
-import { createLLMAdapter, createTool } from '@seashore/core';
-import { createReActAgent } from '@seashore/agent';
+import { createLLMAdapter, createTool } from "@seashore/core";
+import { createReActAgent } from "@seashore/agent";
 
 // Setup LLM
 const llm = createLLMAdapter({
-  provider: 'openai',
-  model: 'gpt-4o',
+  provider: "openai",
+  model: "gpt-4o",
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 // Create tools
 const weatherTool = createTool({
-  name: 'get_weather',
-  description: 'Get current weather for a location',
+  name: "get_weather",
+  description: "Get current weather for a location",
   parameters: z.object({
     location: z.string(),
   }),
@@ -75,12 +77,12 @@ const weatherTool = createTool({
 const agent = createReActAgent({
   llm,
   tools: [weatherTool],
-  systemPrompt: 'You are a helpful weather assistant.',
+  systemPrompt: "You are a helpful weather assistant.",
 });
 
 // Run
 const result = await agent.run({
-  message: 'What is the weather in San Francisco?',
+  message: "What is the weather in San Francisco?",
 });
 
 console.log(result.message);
@@ -89,26 +91,26 @@ console.log(result.message);
 ### DAG Workflow
 
 ```typescript
-import { createWorkflow, createStep } from '@seashore/agent';
+import { createWorkflow, createStep } from "@seashore/agent";
 
 const workflow = createWorkflow({
-  name: 'data-pipeline',
+  name: "data-pipeline",
   steps: [
     createStep({
-      id: 'fetch',
+      id: "fetch",
       fn: async () => ({ data: [1, 2, 3] }),
     }),
     createStep({
-      id: 'process',
-      fn: async ({ fetch }) => fetch.data.map(x => x * 2),
-      dependencies: ['fetch'],
+      id: "process",
+      fn: async ({ fetch }) => fetch.data.map((x) => x * 2),
+      dependencies: ["fetch"],
     }),
     createStep({
-      id: 'save',
+      id: "save",
       fn: async ({ process }) => {
-        console.log('Saved:', process);
+        console.log("Saved:", process);
       },
-      dependencies: ['process'],
+      dependencies: ["process"],
     }),
   ],
 });
@@ -119,13 +121,13 @@ await workflow.execute();
 ### RAG Pipeline
 
 ```typescript
-import { createEmbeddingAdapter } from '@seashore/core';
-import { createVectorDB, createRAGPipeline } from '@seashore/data';
+import { createEmbeddingAdapter } from "@seashore/core";
+import { createVectorDB, createRAGPipeline } from "@seashore/data";
 
 // Setup embedding model
 const embedder = createEmbeddingAdapter({
-  provider: 'openai',
-  model: 'text-embedding-3-small',
+  provider: "openai",
+  model: "text-embedding-3-small",
   apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -144,13 +146,13 @@ const rag = createRAGPipeline({
 
 // Index documents
 await rag.indexDocuments([
-  { id: '1', content: 'TypeScript is a typed superset of JavaScript.' },
-  { id: '2', content: 'React is a JavaScript library for UIs.' },
+  { id: "1", content: "TypeScript is a typed superset of JavaScript." },
+  { id: "2", content: "React is a JavaScript library for UIs." },
 ]);
 
 // Retrieve
 const results = await rag.retrieve({
-  query: 'What is TypeScript?',
+  query: "What is TypeScript?",
   topK: 3,
   hybridAlpha: 0.5, // 0.5 = balanced semantic + keyword search
 });
@@ -159,18 +161,18 @@ const results = await rag.retrieve({
 ### Deploy with Hono
 
 ```typescript
-import { Hono } from 'hono';
-import { createAgentMiddleware } from '@seashore/platform';
-import { createReActAgent } from '@seashore/agent';
+import { Hono } from "hono";
+import { createAgentMiddleware } from "@seashore/platform";
+import { createReActAgent } from "@seashore/agent";
 
 const app = new Hono();
 
 const agent = createReActAgent({
-  llm: createLLMAdapter({ provider: 'openai', model: 'gpt-4o' }),
+  llm: createLLMAdapter({ provider: "openai", model: "gpt-4o" }),
   tools: [weatherTool],
 });
 
-app.post('/chat', createAgentMiddleware({ agent }));
+app.post("/chat", createAgentMiddleware({ agent }));
 
 export default app;
 ```
@@ -222,18 +224,21 @@ Each package can be used independently or composed together.
 ## Why Seashore?
 
 ### vs. LangChain
+
 - **Type-safe**: Full TypeScript with inference
 - **Modular**: Use only what you need
 - **Modern**: Built on TanStack AI (not Vercel AI SDK)
 - **Simpler**: Less abstraction overhead
 
 ### vs. Vercel AI SDK
+
 - **Framework-agnostic**: Not tied to Vercel/Next.js
 - **Production-ready**: Built-in guardrails, eval, MCP
 - **Workflow engine**: DAG orchestration included
 - **RAG built-in**: pgvector + hybrid search out of the box
 
 ### vs. LlamaIndex
+
 - **TypeScript-first**: Not a Python port
 - **Lighter weight**: Focused scope, clear APIs
 - **TanStack AI**: Leverage the TanStack ecosystem
@@ -288,6 +293,7 @@ MIT © Seashore Contributors
 ## Acknowledgments
 
 Built with:
+
 - [TanStack AI](https://tanstack.com/ai) - Modern AI framework
 - [Drizzle ORM](https://orm.drizzle.team/) - Type-safe SQL
 - [Hono](https://hono.dev/) - Fast web framework
