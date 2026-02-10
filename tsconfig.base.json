@@ -3,7 +3,9 @@
     "target": "ES2022",
     "module": "ES2022",
     "moduleResolution": "bundler",
-    "lib": ["ES2022"],
+    "lib": [
+      "ES2022"
+    ],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -11,18 +13,31 @@
     "resolveJsonModule": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": false,
     "paths": {
-      "@seashore/core": ["./packages/core/src/index.ts"],
-      "@seashore/agent": ["./packages/agent/src/index.ts"],
-      "@seashore/data": ["./packages/data/src/index.ts"],
-      "@seashore/platform": ["./packages/platform/src/index.ts"],
-      "@seashore/react": ["./packages/react/src/index.ts"]
+      "@seashore/core": [
+        "./packages/core/src/index.ts"
+      ],
+      "@seashore/agent": [
+        "./packages/agent/src/index.ts"
+      ],
+      "@seashore/data": [
+        "./packages/data/src/index.ts"
+      ],
+      "@seashore/platform": [
+        "./packages/platform/src/index.ts"
+      ],
+      "@seashore/react": [
+        "./packages/react/src/index.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "dist"]
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

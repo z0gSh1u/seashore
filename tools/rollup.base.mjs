@@ -1,7 +1,7 @@
-import resolve from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
-import typescript from '@rollup/plugin-typescript'
-import dts from 'rollup-plugin-dts'
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
+import dts from 'rollup-plugin-dts';
 
 /**
  * Create a standard Rollup config for a Seashore package.
@@ -11,9 +11,9 @@ import dts from 'rollup-plugin-dts'
  * @param {string} opts.tsconfig - Path to tsconfig (default: 'tsconfig.json')
  */
 export function createRollupConfig(opts = {}) {
-  const input = opts.input ?? 'src/index.ts'
-  const external = opts.external ?? []
-  const tsconfig = opts.tsconfig ?? 'tsconfig.json'
+  const input = opts.input ?? 'src/index.ts';
+  const external = opts.external ?? [];
+  const tsconfig = opts.tsconfig ?? 'tsconfig.json';
 
   return [
     {
@@ -21,7 +21,7 @@ export function createRollupConfig(opts = {}) {
       output: {
         dir: 'dist',
         format: 'es',
-        sourcemap: true,
+        sourcemap: false,
         preserveModules: true,
         preserveModulesRoot: 'src',
       },
@@ -56,5 +56,5 @@ export function createRollupConfig(opts = {}) {
       ],
       plugins: [dts({ tsconfig })],
     },
-  ]
+  ];
 }

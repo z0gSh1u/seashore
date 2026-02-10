@@ -1,9 +1,18 @@
 {
   "name": "@seashore/data",
   "version": "0.0.1",
+  "description": "Data persistence and RAG for Seashore - PostgreSQL storage, pgvector, and hybrid search",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "author": "Seashore Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seashore/seashore.git",
+    "directory": "packages/data"
+  },
+  "keywords": ["ai", "rag", "vector-database", "pgvector", "drizzle", "postgresql"],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

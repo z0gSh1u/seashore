@@ -1,9 +1,18 @@
 {
   "name": "@seashore/core",
   "version": "0.0.1",
+  "description": "Core utilities for Seashore AI agent framework - LLM adapters, embeddings, tools, and context management",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "author": "Seashore Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seashore/seashore.git",
+    "directory": "packages/core"
+  },
+  "keywords": ["ai", "llm", "agent", "tanstack-ai", "embeddings", "tools"],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

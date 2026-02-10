@@ -1,9 +1,18 @@
 {
   "name": "@seashore/react",
   "version": "0.0.1",
+  "description": "React hooks for Seashore - SSE streaming chat and agent interaction",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "author": "Seashore Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seashore/seashore.git",
+    "directory": "packages/react"
+  },
+  "keywords": ["ai", "react", "hooks", "streaming", "chat", "sse"],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
