@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@seashore/core": "workspace:*",
+    "@tanstack/ai": "^0.4.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
