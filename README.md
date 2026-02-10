@@ -2,7 +2,7 @@
 
 **A TypeScript-first AI agent framework built on TanStack AI**
 
-English | [简体中文](README.zh-CN.md)\*\*
+English | [简体中文](README.zh-CN.md)
 
 Seashore provides a modular, type-safe foundation for building production AI agents with workflow orchestration, RAG capabilities, and deployment infrastructure.
 
