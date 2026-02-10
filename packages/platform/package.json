@@ -22,6 +22,7 @@
     "@seashore/agent": "workspace:*",
     "@seashore/data": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.0.4",
+    "@tanstack/ai": "^0.4.0",
     "hono": "^4.6.14",
     "zod": "^3.24.1"
   },
