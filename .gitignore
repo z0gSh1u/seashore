@@ -1,0 +1,11 @@
+.prompt
+node_modules/
+dist/
+*.tsbuildinfo
+.nx/
+.env
+.env.*
+.DS_Store
+
+node_modules/
+dist/
