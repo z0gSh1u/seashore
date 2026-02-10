@@ -36,8 +36,7 @@ export function createRollupConfig(opts = {}) {
         commonjs(),
         typescript({
           tsconfig,
-          declaration: true,
-          declarationDir: 'dist',
+          declaration: false, // Let rollup-plugin-dts handle type declarations
         }),
       ],
     },
