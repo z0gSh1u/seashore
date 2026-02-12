@@ -1,0 +1,23 @@
+{
+  "name": "mcp-integration-example",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "MCP (Model Context Protocol) integration with Seashore agents",
+  "scripts": {
+    "start": "tsx index.ts",
+    "server": "tsx mcp-server-example.ts"
+  },
+  "dependencies": {
+    "@seashore/core": "workspace:*",
+    "@seashore/agent": "workspace:*",
+    "@seashore/platform": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "zod": "^3.24.1",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "catalog:"
+  }
+}

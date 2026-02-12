@@ -2,7 +2,7 @@
 
 **基于 TanStack AI 构建的 TypeScript 优先 AI 框架**
 
-\*\*[English](README.md) | 简体中文
+[English](README.md) | 简体中文
 
 Seashore 为构建生产级 AI 智能体提供模块化、类型安全的基础设施，包含工作流编排、RAG 能力和部署基础设施。
 

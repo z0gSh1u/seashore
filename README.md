@@ -269,18 +269,29 @@ pnpm --filter @seashore/core test
 
 ## Documentation
 
-- [Design Philosophy](./docs/plans/2026-02-10-seashore-framework-design.md)
-- [Implementation Plan](./docs/plans/2026-02-10-seashore-implementation-plan.md)
-- [API Documentation](#) (Coming soon)
+**📚 [Full Documentation](./docs/README.md)**
+
+Quick links:
+- [Getting Started](./docs/getting-started/installation.md) - Install and setup
+- [Quick Start](./docs/getting-started/quickstart.md) - Build your first agent in 5 minutes
+- [Tutorial](./docs/getting-started/tutorial.md) - Complete walkthrough
+- [Core Concepts](./docs/core-concepts/architecture.md) - Understanding Seashore
+- [API Reference](./docs/api/core.md) - Detailed API docs
+- [Guides](./docs/guides/building-agents.md) - Best practices and patterns
+- [Deployment](./docs/deployment/overview.md) - Production deployment
+
+中文文档：[完整文档](./docs-zhcn/README.md)
 
 ## Examples
 
 See the [examples](./examples) directory for complete applications:
 
-- [Simple ReAct Agent](./examples/basic-agent)
-- [DAG Workflow](./examples/workflow)
-- [RAG Chatbot](./examples/rag-chatbot)
-- [Full-Stack App](./examples/fullstack-app)
+- [Basic Agent](./examples/basic-agent) - Simple ReAct agent with tools
+- [Workflow](./examples/workflow) - DAG orchestration patterns
+- [RAG Chatbot](./examples/rag-chatbot) - Document Q&A with pgvector
+- [Full-Stack App](./examples/fullstack-app) - Hono backend + React frontend
+- [MCP Integration](./examples/mcp-integration) - Model Context Protocol
+- [Guardrails](./examples/guardrails) - Security and content filtering
 
 ## Contributing
 

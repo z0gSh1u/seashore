@@ -37,26 +37,84 @@ pnpm install
 pnpm start
 ```
 
-## Coming Soon
-
-### 3. RAG Chatbot
+### 3. [RAG Chatbot](./rag-chatbot)
 Full RAG pipeline with pgvector and hybrid search.
 
-**Will demonstrate:**
+**Demonstrates:**
 - Document indexing
 - Vector embeddings
 - Hybrid search (semantic + BM25)
 - RAG-powered chat
+- PostgreSQL + pgvector integration
 
-### 4. Full-Stack App
-Complete application with Hono backend and React frontend.
+**Run:**
+```bash
+cd rag-chatbot
+pnpm install
+# Setup database (see rag-chatbot/README.md)
+pnpm run setup
+pnpm run index
+pnpm start
+```
 
-**Will demonstrate:**
-- Hono deployment middleware
-- SSE streaming
-- React hooks (`useSeashorChat`)
-- Thread management
-- Production deployment
+### 4. [MCP Integration](./mcp-integration)
+Connect to MCP (Model Context Protocol) servers and use external tools.
+
+**Demonstrates:**
+- MCP client connection (stdio and SSE)
+- Converting MCP tools to Seashore format
+- Creating standalone MCP servers
+- Using MCP tools in agents
+- Tool interoperability
+
+**Run:**
+```bash
+cd mcp-integration
+pnpm install
+export OPENAI_API_KEY='your-key'
+pnpm start
+```
+
+### 5. [Guardrails](./guardrails)
+Security guardrails for input validation and output filtering.
+
+**Demonstrates:**
+- Rule-based guardrails (prompt injection, PII detection)
+- LLM-based guardrails (content moderation)
+- Combining multiple guardrails
+- Rate limiting and abuse prevention
+- Agent protection patterns
+
+**Run:**
+```bash
+cd guardrails
+pnpm install
+export OPENAI_API_KEY='your-key'
+pnpm start
+```
+
+### 6. [Full-Stack App](./fullstack-app)
+Complete production-ready application with Hono backend and React frontend.
+
+**Demonstrates:**
+- Hono deployment with seashoreMiddleware
+- SSE streaming for real-time responses
+- React hooks (`useSeashoreChat`)
+- Thread management with PostgreSQL
+- Modern chat UI with sidebar
+- Production deployment patterns
+- Monorepo setup (backend + frontend)
+
+**Run:**
+```bash
+cd fullstack-app
+pnpm install
+# Setup database (see fullstack-app/README.md)
+cp .env.example .env
+# Edit .env with your API key
+pnpm dev
+# Open http://localhost:5173
+```
 
 ## Requirements
 
