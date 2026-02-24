@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createToolkit } from './toolkit.js'
+import { createToolkit } from '../../src/tool/toolkit.js'
 
 describe('createToolkit', () => {
   it('should combine tools into a toolkit', () => {

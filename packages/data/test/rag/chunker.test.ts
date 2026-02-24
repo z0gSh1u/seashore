@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createChunker } from './chunker.js'
+import { createChunker } from '../../src/rag/chunker.js'
 
 describe('createChunker', () => {
   it('should chunk text with fixed strategy', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { convertMCPToolToTanstack } from './client.js'
+import { convertMCPToolToTanstack } from '../../src/mcp/client.js'
 
 describe('convertMCPToolToTanstack', () => {
   it('should convert an MCP tool definition to @tanstack/ai format', () => {

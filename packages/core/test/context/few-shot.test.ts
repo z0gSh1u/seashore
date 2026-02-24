@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { fewShotMessages } from './few-shot.js'
+import { fewShotMessages } from '../../src/context/few-shot.js'
 
 describe('fewShotMessages', () => {
   it('should convert examples to message pairs', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createStorageService } from './service.js'
+import { createStorageService } from '../../src/storage/service.js'
 
 // Create a mock Drizzle db
 function createMockDb() {

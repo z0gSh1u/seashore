@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
-import { createEvalSuite } from './suite.js'
-import { createMetric } from './metric.js'
+import { createEvalSuite } from '../../src/eval/suite.js'
+import { createMetric } from '../../src/eval/metric.js'
 
 describe('createEvalSuite', () => {
   it('should run metrics against dataset', async () => {

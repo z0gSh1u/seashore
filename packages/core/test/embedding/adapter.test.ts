@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { createEmbeddingAdapter } from './adapter.js'
+import { createEmbeddingAdapter } from '../../src/embedding/adapter.js'
 
 // Mock global fetch
 const mockFetch = vi.fn()

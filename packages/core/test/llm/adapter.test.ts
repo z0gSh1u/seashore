@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { createLLMAdapter } from './adapter.js'
+import { createLLMAdapter } from '../../src/llm/adapter.js'
 
 describe('createLLMAdapter', () => {
   it('should create an OpenAI adapter', () => {

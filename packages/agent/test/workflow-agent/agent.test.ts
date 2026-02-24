@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { createWorkflowAgent } from './agent.js'
-import { createWorkflow, createStep } from '../workflow/builder.js'
+import { createWorkflowAgent } from '../../src/workflow-agent/agent.js'
+import { createWorkflow, createStep } from '../../src/workflow/builder.js'
 
 describe('createWorkflowAgent', () => {
   it('should wrap a workflow as an agent', async () => {

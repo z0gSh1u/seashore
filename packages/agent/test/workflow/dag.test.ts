@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { DAG } from './dag.js'
+import { DAG } from '../../src/workflow/dag.js'
 
 describe('DAG', () => {
   it('should add nodes', () => {

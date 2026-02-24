@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { createMetric, createLLMJudgeMetric } from './metric.js'
+import { createMetric, createLLMJudgeMetric } from '../../src/eval/metric.js'
 
 describe('createMetric', () => {
   it('should create a custom metric', async () => {

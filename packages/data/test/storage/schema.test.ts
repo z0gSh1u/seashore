@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { threads, messages, workflowRuns } from './schema.js'
+import { threads, messages, workflowRuns } from '../../src/storage/schema.js'
 
 describe('Storage Schema', () => {
   it('should export threads table', () => {

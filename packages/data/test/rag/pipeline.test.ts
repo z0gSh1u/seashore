@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { createRAG } from './pipeline.js'
+import { createRAG } from '../../src/rag/pipeline.js'
 
 describe('createRAG', () => {
   it('should create a RAG pipeline', () => {

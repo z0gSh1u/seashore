@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { systemPrompt } from './system-prompt.js'
+import { systemPrompt } from '../../src/context/system-prompt.js'
 
 describe('systemPrompt', () => {
   it('should build a basic system prompt with role', () => {

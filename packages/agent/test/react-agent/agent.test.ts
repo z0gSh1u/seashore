@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { z } from 'zod'
-import { createReActAgent } from './agent.js'
+import { createReActAgent } from '../../src/react-agent/agent.js'
 
 // Mock @tanstack/ai
 vi.mock('@tanstack/ai', () => ({

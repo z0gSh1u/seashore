@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
-import { createWorkflow } from './builder.js'
-import { createStep } from './builder.js'
+import { createWorkflow } from '../../src/workflow/builder.js'
+import { createStep } from '../../src/workflow/builder.js'
 
 describe('Workflow Executor', () => {
   it('should execute a single step', async () => {

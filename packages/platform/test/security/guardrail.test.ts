@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
-import { createGuardrail } from './guardrail.js'
-import { createLLMGuardrail } from './llm-guardrail.js'
+import { createGuardrail } from '../../src/security/guardrail.js'
+import { createLLMGuardrail } from '../../src/security/llm-guardrail.js'
 
 describe('createGuardrail', () => {
   it('should create a guardrail with beforeRequest', async () => {

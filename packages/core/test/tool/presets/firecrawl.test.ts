@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { firecrawlScrapeDefinition } from './firecrawl.js'
+import { firecrawlScrapeDefinition } from '../../../src/tool/presets/firecrawl.js'
 
 describe('firecrawlScrapeDefinition', () => {
   it('should have correct name', () => {

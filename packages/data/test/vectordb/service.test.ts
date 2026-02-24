@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { embeddings } from './schema.js'
-import type { VectorDBService, SearchQuery } from './service.js'
+import { embeddings } from '../../src/vectordb/schema.js'
+import type { VectorDBService, SearchQuery } from '../../src/vectordb/service.js'
 
 describe('VectorDB Schema', () => {
   it('should export embeddings table', () => {

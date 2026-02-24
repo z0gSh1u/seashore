@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { seashoreMiddleware } from './middleware.js'
+import { seashoreMiddleware } from '../../src/deploy/middleware.js'
 import { Hono } from 'hono'
 
 describe('seashoreMiddleware', () => {
