@@ -1,3 +1,3 @@
-import { createRollupConfig } from '../../tools/rollup.base.mjs'
+import { createRollupConfig } from '../../rollup.base.mjs';
 
-export default createRollupConfig()
+export default createRollupConfig();
