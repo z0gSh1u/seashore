@@ -10,7 +10,8 @@
     "build": "pnpm nx run-many -t build",
     "test": "pnpm nx run-many -t test",
     "lint": "pnpm nx run-many -t lint",
-    "typecheck": "pnpm nx run-many -t typecheck"
+    "typecheck": "pnpm nx run-many -t typecheck",
+    "clean": "pnpm nx reset && rm -rf packages/*/dist"
   },
   "devDependencies": {
     "@nx/js": "^20.3.0",
