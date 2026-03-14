@@ -1,0 +1,24 @@
+{
+  "name": "@seashore/examples",
+  "version": "0.0.1",
+  "description": "Examples for Seashore AI agent framework",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "example": "tsx"
+  },
+  "dependencies": {
+    "@seashore/agent": "workspace:*",
+    "@seashore/core": "workspace:*",
+    "@seashore/data": "workspace:*",
+    "@seashore/platform": "workspace:*",
+    "@seashore/react": "workspace:*",
+    "@tanstack/ai": "^0.2.0",
+    "hono": "^4.7.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "catalog:"
+  }
+}
