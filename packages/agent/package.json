@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@seashore/core": "workspace:*",
-    "@tanstack/ai": "^0.4.0",
+    "@tanstack/ai": "catalog:",
     "zod": "4"
   },
   "devDependencies": {

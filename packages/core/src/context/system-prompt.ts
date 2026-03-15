@@ -5,23 +5,35 @@ interface Example {
 
 type OutputFormat = 'json' | 'code' | 'markdown' | 'text';
 
-interface OutputFormatOptions {
-  language?: string;
-}
-
 interface SystemPromptBuilder {
+  /**
+   * Sets the role or persona that the language model should adopt when generating responses.
+   */
   role(description: string): SystemPromptBuilder;
+  /**
+   * Adds an instruction or guideline for the language model to follow when generating responses.
+   */
   instruction(text: string): SystemPromptBuilder;
-  constraint(text: string): SystemPromptBuilder;
+  /**
+   * Adds few-shot examples to the system prompt.
+   */
   example(example: Example): SystemPromptBuilder;
-  outputFormat(format: OutputFormat, options?: OutputFormatOptions): SystemPromptBuilder;
+  /**
+   * Specifies the desired output format for the language model's responses, such as JSON, code, Markdown, or plain text.
+   */
+  outputFormat(format: OutputFormat): SystemPromptBuilder;
+  /**
+   * Builds and returns the final system prompt string based on the provided role, instructions, examples, and output format.
+   */
   build(): string;
 }
 
+/**
+ * Returns a builder for constructing a system prompt string with a fluent API.
+ */
 export function systemPrompt(): SystemPromptBuilder {
   let roleText = '';
   const instructions: string[] = [];
-  const constraints: string[] = [];
   const examples: Example[] = [];
   let outputFormatText = '';
 
@@ -36,25 +48,18 @@ export function systemPrompt(): SystemPromptBuilder {
       return builder;
     },
 
-    constraint(text: string) {
-      constraints.push(text);
-      return builder;
-    },
-
     example(example: Example) {
       examples.push(example);
       return builder;
     },
 
-    outputFormat(format: OutputFormat, options?: OutputFormatOptions) {
+    outputFormat(format: OutputFormat) {
       switch (format) {
         case 'json':
           outputFormatText = 'Respond with valid JSON only. Do not include any other text.';
           break;
         case 'code':
-          outputFormatText = options?.language
-            ? `Respond with ONLY a ${options.language} code block. Do not include explanations.`
-            : 'Respond with ONLY a code block. Do not include explanations.';
+          outputFormatText = 'Respond with ONLY a code block. Do not include explanations.';
           break;
         case 'markdown':
           outputFormatText = 'Respond in Markdown format.';
@@ -75,10 +80,6 @@ export function systemPrompt(): SystemPromptBuilder {
 
       if (instructions.length > 0) {
         sections.push('## Instructions\n' + instructions.map((i) => `- ${i}`).join('\n'));
-      }
-
-      if (constraints.length > 0) {
-        sections.push('## Constraints\n' + constraints.map((c) => `- ${c}`).join('\n'));
       }
 
       if (examples.length > 0) {

@@ -1,31 +1,29 @@
 import { createOpenaiChat } from '@tanstack/ai-openai';
 import { createAnthropicChat } from '@tanstack/ai-anthropic';
 import { createGeminiChat } from '@tanstack/ai-gemini';
-import type { LLMAdapterConfig, LLMAdapterFactory } from './types';
+import type { LLMProviderConfig, LLMAdapter } from './types';
 
 /**
- * Creates an LLM adapter factory based on the provided configuration.
+ * Creates an LLM adapter based on the provided configuration.
+ *
+ * `LLMAdapter`is a standard interface to interact with a language model provided by a specific provider.
  */
-export function createLLMAdapter(config: LLMAdapterConfig): LLMAdapterFactory {
+export function createLLMAdapter(model: string, config: LLMProviderConfig): LLMAdapter {
   switch (config.provider) {
     case 'openai':
-      return (model: string) =>
-        createOpenaiChat(model as any, config.apiKey, {
-          baseURL: config.baseURL,
-        });
+      return createOpenaiChat(model as any, config.apiKey, {
+        baseURL: config.baseURL,
+      });
     case 'anthropic':
-      return (model: string) =>
-        createAnthropicChat(model as any, config.apiKey, {
-          baseURL: config.baseURL,
-        });
+      return createAnthropicChat(model as any, config.apiKey, {
+        baseURL: config.baseURL,
+      });
     case 'gemini':
-      return (model: string) =>
-        createGeminiChat(model as any, config.apiKey, {
-          baseURL: config.baseURL,
-        });
+      return createGeminiChat(model as any, config.apiKey, {
+        baseURL: config.baseURL,
+      });
     default: {
-      const _exhaustive: never = config.provider;
-      throw new Error(`Unsupported provider: ${String(_exhaustive)}`);
+      throw new Error(`Unsupported provider: ${String(config.provider)}`);
     }
   }
 }

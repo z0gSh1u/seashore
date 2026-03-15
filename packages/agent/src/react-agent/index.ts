@@ -5,7 +5,7 @@
  * use tools and iterate through multiple steps to solve tasks.
  */
 
-export { createReActAgent } from './agent.js';
+export { createReActAgent } from './agent';
 export type {
   ReActAgent,
   ReActAgentConfig,
@@ -19,4 +19,4 @@ export type {
   AfterResponseHook,
   RunOptions,
   ToolCall,
-} from './types.js';
+} from './types';

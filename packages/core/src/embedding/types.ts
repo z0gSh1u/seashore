@@ -1,8 +1,7 @@
-export type EmbeddingProvider = 'openai' | 'gemini' | 'anthropic';
+export type EmbeddingProvider = 'openai';
 
 export interface EmbeddingConfig {
   provider: EmbeddingProvider;
-  model: string;
   apiKey: string;
   baseURL?: string;
   dimensions?: number;
