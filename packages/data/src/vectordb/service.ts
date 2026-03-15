@@ -1,44 +1,44 @@
-import { eq, sql, and } from 'drizzle-orm'
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
-import { embeddings } from './schema.js'
-import type { EmbeddingAdapter } from '@seashore/core'
+import { eq, sql, and } from 'drizzle-orm';
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { embeddings } from './schema.js';
+import type { EmbeddingAdapter } from '@seashore/core';
 
 /**
  * Document to be inserted into the vector database
  */
 export interface DocumentInput {
-  content: string
-  metadata?: Record<string, unknown>
+  content: string;
+  metadata?: Record<string, unknown>;
 }
 
 /**
  * Search result from the vector database
  */
 export interface SearchResult {
-  id: string
-  content: string
-  metadata: Record<string, unknown> | null
-  score: number
+  id: string;
+  content: string;
+  metadata: Record<string, unknown> | null;
+  score: number;
 }
 
 /**
  * Search query with multiple modes
  */
 export interface SearchQuery {
-  vector?: number[]
-  text?: string
-  mode: 'vector' | 'text' | 'hybrid'
-  topK: number
-  filter?: Record<string, unknown>
-  hybridWeights?: { vector: number; text: number }
+  vector?: number[];
+  text?: string;
+  mode: 'vector' | 'text' | 'hybrid';
+  topK: number;
+  filter?: Record<string, unknown>;
+  hybridWeights?: { vector: number; text: number };
 }
 
 /**
  * Metadata filter for deletion
  */
 export interface MetadataFilter {
-  collection?: string
-  metadata?: Record<string, unknown>
+  collection?: string;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -48,10 +48,10 @@ export interface VectorDBService {
   upsert(
     collection: string,
     docs: DocumentInput[],
-    embeddingAdapter: EmbeddingAdapter
-  ): Promise<void>
-  search(collection: string, query: SearchQuery): Promise<SearchResult[]>
-  delete(collection: string, filter?: MetadataFilter): Promise<void>
+    embeddingAdapter: EmbeddingAdapter,
+  ): Promise<void>;
+  search(collection: string, query: SearchQuery): Promise<SearchResult[]>;
+  delete(collection: string, filter?: MetadataFilter): Promise<void>;
 }
 
 /**
@@ -93,8 +93,8 @@ export interface VectorDBService {
 export function createVectorDBService(db: PostgresJsDatabase): VectorDBService {
   return {
     async upsert(collection, docs, embeddingAdapter) {
-      const texts = docs.map((d) => d.content)
-      const vectors = await embeddingAdapter.embed(texts)
+      const texts = docs.map((d) => d.content);
+      const vectors = await embeddingAdapter.embed(texts);
 
       const values = docs.map((doc, i) => ({
         collection,
@@ -102,34 +102,34 @@ export function createVectorDBService(db: PostgresJsDatabase): VectorDBService {
         metadata: doc.metadata ?? {},
         embedding: vectors[i]!,
         contentTsv: sql`to_tsvector('english', ${doc.content})`,
-      }))
+      }));
 
       for (const value of values) {
-        await db.insert(embeddings).values(value as never)
+        await db.insert(embeddings).values(value as never);
       }
     },
 
     async search(collection, query) {
       switch (query.mode) {
         case 'vector':
-          return searchVector(db, collection, query)
+          return searchVector(db, collection, query);
         case 'text':
-          return searchText(db, collection, query)
+          return searchText(db, collection, query);
         case 'hybrid':
-          return searchHybrid(db, collection, query)
+          return searchHybrid(db, collection, query);
         default: {
-          const _exhaustive: never = query.mode
-          throw new Error(`Unsupported search mode: ${String(_exhaustive)}`)
+          const _exhaustive: never = query.mode;
+          throw new Error(`Unsupported search mode: ${String(_exhaustive)}`);
         }
       }
     },
 
     async delete(collection, filter) {
-      const conditions = [eq(embeddings.collection, collection)]
+      const conditions = [eq(embeddings.collection, collection)];
       // Additional metadata filtering could be added here
-      await db.delete(embeddings).where(and(...conditions))
+      await db.delete(embeddings).where(and(...conditions));
     },
-  }
+  };
 }
 
 /**
@@ -138,11 +138,11 @@ export function createVectorDBService(db: PostgresJsDatabase): VectorDBService {
 async function searchVector(
   db: PostgresJsDatabase,
   collection: string,
-  query: SearchQuery
+  query: SearchQuery,
 ): Promise<SearchResult[]> {
-  if (!query.vector) throw new Error('vector is required for vector search')
+  if (!query.vector) throw new Error('vector is required for vector search');
 
-  const vectorStr = `[${query.vector.join(',')}]`
+  const vectorStr = `[${query.vector.join(',')}]`;
   const rows = await db.execute(sql`
     SELECT id, content, metadata,
       1 - (embedding <=> ${vectorStr}::vector) as score
@@ -150,9 +150,9 @@ async function searchVector(
     WHERE collection = ${collection}
     ORDER BY embedding <=> ${vectorStr}::vector
     LIMIT ${query.topK}
-  `)
+  `);
 
-  return rows as unknown as SearchResult[]
+  return rows as unknown as SearchResult[];
 }
 
 /**
@@ -161,9 +161,9 @@ async function searchVector(
 async function searchText(
   db: PostgresJsDatabase,
   collection: string,
-  query: SearchQuery
+  query: SearchQuery,
 ): Promise<SearchResult[]> {
-  if (!query.text) throw new Error('text is required for text search')
+  if (!query.text) throw new Error('text is required for text search');
 
   const rows = await db.execute(sql`
     SELECT id, content, metadata,
@@ -173,9 +173,9 @@ async function searchText(
       AND content_tsv @@ plainto_tsquery('english', ${query.text})
     ORDER BY score DESC
     LIMIT ${query.topK}
-  `)
+  `);
 
-  return rows as unknown as SearchResult[]
+  return rows as unknown as SearchResult[];
 }
 
 /**
@@ -185,17 +185,17 @@ async function searchText(
 async function searchHybrid(
   db: PostgresJsDatabase,
   collection: string,
-  query: SearchQuery
+  query: SearchQuery,
 ): Promise<SearchResult[]> {
   if (!query.vector || !query.text) {
-    throw new Error('Both vector and text are required for hybrid search')
+    throw new Error('Both vector and text are required for hybrid search');
   }
 
-  const weights = query.hybridWeights ?? { vector: 0.7, text: 0.3 }
-  const vectorStr = `[${query.vector.join(',')}]`
+  const weights = query.hybridWeights ?? { vector: 0.7, text: 0.3 };
+  const vectorStr = `[${query.vector.join(',')}]`;
 
   // Reciprocal Rank Fusion (RRF) constant
-  const k = 60
+  const k = 60;
 
   const rows = await db.execute(sql`
     WITH vector_results AS (
@@ -227,7 +227,7 @@ async function searchHybrid(
     FULL OUTER JOIN text_results t ON v.id = t.id
     ORDER BY score DESC
     LIMIT ${query.topK}
-  `)
+  `);
 
-  return rows as unknown as SearchResult[]
+  return rows as unknown as SearchResult[];
 }

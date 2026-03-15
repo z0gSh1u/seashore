@@ -5,5 +5,5 @@
  * with SSE streaming, storage integration, and thread management.
  */
 
-export { seashoreMiddleware } from './middleware.js'
-export type { SeashoreMiddlewareConfig } from './middleware.js'
+export { seashoreMiddleware } from './middleware.js';
+export type { SeashoreMiddlewareConfig } from './middleware.js';

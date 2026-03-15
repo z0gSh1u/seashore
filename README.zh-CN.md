@@ -51,20 +51,20 @@ npm install @seashore/react
 ### 基础 ReAct 智能体
 
 ```typescript
-import { createLLMAdapter, createTool } from "@seashore/core";
-import { createReActAgent } from "@seashore/agent";
+import { createLLMAdapter, createTool } from '@seashore/core';
+import { createReActAgent } from '@seashore/agent';
 
 // 设置 LLM
 const llm = createLLMAdapter({
-  provider: "openai",
-  model: "gpt-4o",
+  provider: 'openai',
+  model: 'gpt-4o',
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 // 创建工具
 const weatherTool = createTool({
-  name: "get_weather",
-  description: "获取指定地点的当前天气",
+  name: 'get_weather',
+  description: '获取指定地点的当前天气',
   parameters: z.object({
     location: z.string(),
   }),
@@ -77,12 +77,12 @@ const weatherTool = createTool({
 const agent = createReActAgent({
   llm,
   tools: [weatherTool],
-  systemPrompt: "你是一个有用的天气助手。",
+  systemPrompt: '你是一个有用的天气助手。',
 });
 
 // 运行
 const result = await agent.run({
-  message: "旧金山的天气怎么样？",
+  message: '旧金山的天气怎么样？',
 });
 
 console.log(result.message);
@@ -91,26 +91,26 @@ console.log(result.message);
 ### DAG 工作流
 
 ```typescript
-import { createWorkflow, createStep } from "@seashore/agent";
+import { createWorkflow, createStep } from '@seashore/agent';
 
 const workflow = createWorkflow({
-  name: "data-pipeline",
+  name: 'data-pipeline',
   steps: [
     createStep({
-      id: "fetch",
+      id: 'fetch',
       fn: async () => ({ data: [1, 2, 3] }),
     }),
     createStep({
-      id: "process",
+      id: 'process',
       fn: async ({ fetch }) => fetch.data.map((x) => x * 2),
-      dependencies: ["fetch"],
+      dependencies: ['fetch'],
     }),
     createStep({
-      id: "save",
+      id: 'save',
       fn: async ({ process }) => {
-        console.log("已保存：", process);
+        console.log('已保存：', process);
       },
-      dependencies: ["process"],
+      dependencies: ['process'],
     }),
   ],
 });
@@ -121,13 +121,13 @@ await workflow.execute();
 ### RAG 管道
 
 ```typescript
-import { createEmbeddingAdapter } from "@seashore/core";
-import { createVectorDB, createRAGPipeline } from "@seashore/data";
+import { createEmbeddingAdapter } from '@seashore/core';
+import { createVectorDB, createRAGPipeline } from '@seashore/data';
 
 // 设置嵌入模型
 const embedder = createEmbeddingAdapter({
-  provider: "openai",
-  model: "text-embedding-3-small",
+  provider: 'openai',
+  model: 'text-embedding-3-small',
   apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -146,13 +146,13 @@ const rag = createRAGPipeline({
 
 // 索引文档
 await rag.indexDocuments([
-  { id: "1", content: "TypeScript 是 JavaScript 的类型化超集。" },
-  { id: "2", content: "React 是用于构建用户界面的 JavaScript 库。" },
+  { id: '1', content: 'TypeScript 是 JavaScript 的类型化超集。' },
+  { id: '2', content: 'React 是用于构建用户界面的 JavaScript 库。' },
 ]);
 
 // 检索
 const results = await rag.retrieve({
-  query: "什么是 TypeScript？",
+  query: '什么是 TypeScript？',
   topK: 3,
   hybridAlpha: 0.5, // 0.5 = 平衡的语义 + 关键词搜索
 });
@@ -161,18 +161,18 @@ const results = await rag.retrieve({
 ### 使用 Hono 部署
 
 ```typescript
-import { Hono } from "hono";
-import { createAgentMiddleware } from "@seashore/platform";
-import { createReActAgent } from "@seashore/agent";
+import { Hono } from 'hono';
+import { createAgentMiddleware } from '@seashore/platform';
+import { createReActAgent } from '@seashore/agent';
 
 const app = new Hono();
 
 const agent = createReActAgent({
-  llm: createLLMAdapter({ provider: "openai", model: "gpt-4o" }),
+  llm: createLLMAdapter({ provider: 'openai', model: 'gpt-4o' }),
   tools: [weatherTool],
 });
 
-app.post("/chat", createAgentMiddleware({ agent }));
+app.post('/chat', createAgentMiddleware({ agent }));
 
 export default app;
 ```

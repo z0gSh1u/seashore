@@ -12,14 +12,23 @@
     "url": "https://github.com/seashore/seashore.git",
     "directory": "packages/react"
   },
-  "keywords": ["ai", "react", "hooks", "streaming", "chat", "sse"],
+  "keywords": [
+    "ai",
+    "react",
+    "hooks",
+    "streaming",
+    "chat",
+    "sse"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rollup -c rollup.config.mjs",
     "test": "vitest run",

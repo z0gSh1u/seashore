@@ -1,57 +1,57 @@
-import { eq, desc } from 'drizzle-orm'
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
-import { threads, messages, workflowRuns } from './schema.js'
+import { eq, desc } from 'drizzle-orm';
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { threads, messages, workflowRuns } from './schema.js';
 
 /**
  * Pagination options for list operations
  */
 export interface PaginationOpts {
-  limit?: number
-  offset?: number
+  limit?: number;
+  offset?: number;
 }
 
 /**
  * New message to be added to a thread
  */
 export interface NewMessage {
-  role: 'user' | 'assistant' | 'system' | 'tool'
-  content: unknown
-  toolCalls?: unknown[]
-  toolResults?: unknown[]
+  role: 'user' | 'assistant' | 'system' | 'tool';
+  content: unknown;
+  toolCalls?: unknown[];
+  toolResults?: unknown[];
   tokenUsage?: {
-    promptTokens?: number
-    completionTokens?: number
-    totalTokens?: number
-  }
+    promptTokens?: number;
+    completionTokens?: number;
+    totalTokens?: number;
+  };
 }
 
 /**
  * Inferred types from Drizzle schema
  */
-export type Thread = typeof threads.$inferSelect
-export type Message = typeof messages.$inferSelect
-export type WorkflowRun = typeof workflowRuns.$inferSelect
+export type Thread = typeof threads.$inferSelect;
+export type Message = typeof messages.$inferSelect;
+export type WorkflowRun = typeof workflowRuns.$inferSelect;
 
 /**
  * Storage service interface for managing threads, messages, and workflow runs
  */
 export interface StorageService {
   // Threads
-  createThread(opts?: { title?: string; metadata?: Record<string, unknown> }): Promise<Thread>
-  getThread(id: string): Promise<Thread | undefined>
-  listThreads(opts?: PaginationOpts): Promise<Thread[]>
-  deleteThread(id: string): Promise<void>
+  createThread(opts?: { title?: string; metadata?: Record<string, unknown> }): Promise<Thread>;
+  getThread(id: string): Promise<Thread | undefined>;
+  listThreads(opts?: PaginationOpts): Promise<Thread[]>;
+  deleteThread(id: string): Promise<void>;
 
   // Messages
-  addMessage(threadId: string, message: NewMessage): Promise<Message>
-  getMessages(threadId: string, opts?: PaginationOpts): Promise<Message[]>
+  addMessage(threadId: string, message: NewMessage): Promise<Message>;
+  getMessages(threadId: string, opts?: PaginationOpts): Promise<Message[]>;
 
   // Workflow Runs
   saveWorkflowRun(
-    run: Partial<typeof workflowRuns.$inferInsert> & { id?: string }
-  ): Promise<WorkflowRun>
-  getWorkflowRun(id: string): Promise<WorkflowRun | undefined>
-  updateWorkflowRun(id: string, data: Partial<typeof workflowRuns.$inferInsert>): Promise<void>
+    run: Partial<typeof workflowRuns.$inferInsert> & { id?: string },
+  ): Promise<WorkflowRun>;
+  getWorkflowRun(id: string): Promise<WorkflowRun | undefined>;
+  updateWorkflowRun(id: string, data: Partial<typeof workflowRuns.$inferInsert>): Promise<void>;
 }
 
 /**
@@ -92,13 +92,13 @@ export function createStorageService(db: PostgresJsDatabase): StorageService {
           title: opts?.title,
           metadata: opts?.metadata,
         })
-        .returning()
-      return thread!
+        .returning();
+      return thread!;
     },
 
     async getThread(id) {
-      const [thread] = await db.select().from(threads).where(eq(threads.id, id)).limit(1)
-      return thread
+      const [thread] = await db.select().from(threads).where(eq(threads.id, id)).limit(1);
+      return thread;
     },
 
     async listThreads(opts) {
@@ -107,11 +107,11 @@ export function createStorageService(db: PostgresJsDatabase): StorageService {
         .from(threads)
         .orderBy(desc(threads.updatedAt))
         .limit(opts?.limit ?? 50)
-        .offset(opts?.offset ?? 0)
+        .offset(opts?.offset ?? 0);
     },
 
     async deleteThread(id) {
-      await db.delete(threads).where(eq(threads.id, id))
+      await db.delete(threads).where(eq(threads.id, id));
     },
 
     async addMessage(threadId, message) {
@@ -125,15 +125,12 @@ export function createStorageService(db: PostgresJsDatabase): StorageService {
           toolResults: message.toolResults,
           tokenUsage: message.tokenUsage,
         })
-        .returning()
+        .returning();
 
       // Touch thread updatedAt
-      await db
-        .update(threads)
-        .set({ updatedAt: new Date() })
-        .where(eq(threads.id, threadId))
+      await db.update(threads).set({ updatedAt: new Date() }).where(eq(threads.id, threadId));
 
-      return msg!
+      return msg!;
     },
 
     async getMessages(threadId, opts) {
@@ -143,31 +140,27 @@ export function createStorageService(db: PostgresJsDatabase): StorageService {
         .where(eq(messages.threadId, threadId))
         .orderBy(messages.createdAt)
         .limit(opts?.limit ?? 100)
-        .offset(opts?.offset ?? 0)
+        .offset(opts?.offset ?? 0);
     },
 
     async saveWorkflowRun(run) {
       const [result] = await db
         .insert(workflowRuns)
         .values(run as typeof workflowRuns.$inferInsert)
-        .returning()
-      return result!
+        .returning();
+      return result!;
     },
 
     async getWorkflowRun(id) {
-      const [run] = await db
-        .select()
-        .from(workflowRuns)
-        .where(eq(workflowRuns.id, id))
-        .limit(1)
-      return run
+      const [run] = await db.select().from(workflowRuns).where(eq(workflowRuns.id, id)).limit(1);
+      return run;
     },
 
     async updateWorkflowRun(id, data) {
       await db
         .update(workflowRuns)
         .set({ ...data, updatedAt: new Date() })
-        .where(eq(workflowRuns.id, id))
+        .where(eq(workflowRuns.id, id));
     },
-  }
+  };
 }

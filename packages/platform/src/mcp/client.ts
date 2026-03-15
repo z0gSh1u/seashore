@@ -1,16 +1,16 @@
-import { Client } from '@modelcontextprotocol/sdk/client/index.js'
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
-import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
-import { toolDefinition } from '@tanstack/ai'
-import { z } from 'zod'
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
+import { toolDefinition } from '@tanstack/ai';
+import { z } from 'zod';
 
 export interface MCPConnectionConfig {
-  transport: 'stdio' | 'sse'
+  transport: 'stdio' | 'sse';
   // stdio options
-  command?: string
-  args?: string[]
+  command?: string;
+  args?: string[];
   // sse options
-  url?: string
+  url?: string;
 }
 
 /**
@@ -28,38 +28,38 @@ export function convertMCPToolToTanstack(
     name: mcpTool.name,
     description: mcpTool.description ?? '',
     inputSchema: z.record(z.unknown()),
-  })
+  });
 
   return def.server(async (input) => {
-    return callFn(input as Record<string, unknown>)
-  })
+    return callFn(input as Record<string, unknown>);
+  });
 }
 
 export async function connectMCP(config: MCPConnectionConfig) {
-  let transport: StdioClientTransport | SSEClientTransport
+  let transport: StdioClientTransport | SSEClientTransport;
 
   if (config.transport === 'stdio') {
-    if (!config.command) throw new Error('command is required for stdio transport')
+    if (!config.command) throw new Error('command is required for stdio transport');
     transport = new StdioClientTransport({
       command: config.command,
       args: config.args ?? [],
-    })
+    });
   } else if (config.transport === 'sse') {
-    if (!config.url) throw new Error('url is required for sse transport')
-    transport = new SSEClientTransport(new URL(config.url))
+    if (!config.url) throw new Error('url is required for sse transport');
+    transport = new SSEClientTransport(new URL(config.url));
   } else {
-    throw new Error(`Unsupported transport: ${String(config.transport)}`)
+    throw new Error(`Unsupported transport: ${String(config.transport)}`);
   }
 
-  const client = new Client({ name: 'seashore-mcp-client', version: '0.0.1' })
-  await client.connect(transport)
+  const client = new Client({ name: 'seashore-mcp-client', version: '0.0.1' });
+  await client.connect(transport);
 
-  const { tools } = await client.listTools()
+  const { tools } = await client.listTools();
 
   return tools.map((tool) =>
     convertMCPToolToTanstack(tool, async (args) => {
-      const result = await client.callTool({ name: tool.name, arguments: args })
-      return result.content
+      const result = await client.callTool({ name: tool.name, arguments: args });
+      return result.content;
     }),
-  )
+  );
 }

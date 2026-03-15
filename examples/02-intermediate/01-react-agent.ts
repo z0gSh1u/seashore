@@ -34,66 +34,70 @@
  * ```
  */
 
-import { createLLMAdapter } from '@seashore/core.js'
-import { createReActAgent, type Message } from '@seashore/agent.js'
-import { tool } from '@tanstack/ai'
-import { z } from 'zod'
+import { createLLMAdapter } from '@seashore/core.js';
+import { createReActAgent, type Message } from '@seashore/agent.js';
+import { tool } from '@tanstack/ai';
+import { z } from 'zod';
 
 // Validate environment variables
-const apiKey = process.env.OPENAI_API_KEY
-const baseURL = process.env.OPENAI_BASE_URL
+const apiKey = process.env.OPENAI_API_KEY;
+const baseURL = process.env.OPENAI_BASE_URL;
 
 if (!apiKey) {
-  console.error('❌ Error: OPENAI_API_KEY is required')
-  console.error('Please copy .env.example to .env and add your OpenAI API key')
-  process.exit(1)
+  console.error('❌ Error: OPENAI_API_KEY is required');
+  console.error('Please copy .env.example to .env and add your OpenAI API key');
+  process.exit(1);
 }
 
 async function main(): Promise<void> {
-  console.log('🤖 ReAct Agent Example\n')
+  console.log('🤖 ReAct Agent Example\n');
 
   // Step 1: Create the LLM adapter
   const adapter = createLLMAdapter({
     provider: 'openai',
     apiKey,
     baseURL,
-  })
+  });
 
   // Step 2: Define tools for the agent
 
   // Tool 1: Calculator
   const calculateTool = tool({
     name: 'calculate',
-    description: 'Performs mathematical calculations with precision. ' +
+    description:
+      'Performs mathematical calculations with precision. ' +
       'Use this for any arithmetic, percentages, or mathematical operations.',
     parameters: z.object({
-      expression: z.string().describe('The mathematical expression (e.g., "123 * 456", "15% of 200")'),
+      expression: z
+        .string()
+        .describe('The mathematical expression (e.g., "123 * 456", "15% of 200")'),
     }),
     execute: async ({ expression }) => {
-      console.log(`  🔧 Tool called: calculate("${expression}")`)
+      console.log(`  🔧 Tool called: calculate("${expression}")`);
       try {
         // Simple eval for demo - use proper math library in production
         // eslint-disable-next-line no-eval
-        const result = eval(expression.replace(/ /g, ''))
-        console.log(`     Result: ${result}`)
-        return String(result)
+        const result = eval(expression.replace(/ /g, ''));
+        console.log(`     Result: ${result}`);
+        return String(result);
       } catch (error) {
-        console.log(`     Error: Invalid expression`)
-        return `Error: Could not evaluate "${expression}"`
+        console.log(`     Error: Invalid expression`);
+        return `Error: Could not evaluate "${expression}"`;
       }
     },
-  })
+  });
 
   // Tool 2: Knowledge base search (mock)
   const searchTool = tool({
     name: 'searchKnowledge',
-    description: 'Searches the knowledge base for information about ' +
+    description:
+      'Searches the knowledge base for information about ' +
       'programming, AI, and technology topics.',
     parameters: z.object({
       topic: z.string().describe('The topic to search for'),
     }),
     execute: async ({ topic }) => {
-      console.log(`  🔧 Tool called: searchKnowledge("${topic}")`)
+      console.log(`  🔧 Tool called: searchKnowledge("${topic}")`);
 
       // Mock knowledge base
       const knowledgeBase: Record<string, string> = {
@@ -101,28 +105,29 @@ async function main(): Promise<void> {
           'Neural networks are computational models inspired by biological neural networks. ' +
           'They consist of layers of interconnected nodes (neurons) that process information. ' +
           'Deep learning uses neural networks with many layers to learn complex patterns.',
-        'typescript':
+        typescript:
           'TypeScript is a strongly typed superset of JavaScript developed by Microsoft. ' +
           'It adds optional static typing, interfaces, and advanced IDE support ' +
           'while compiling to plain JavaScript.',
-        'react':
+        react:
           'React is a JavaScript library for building user interfaces. ' +
           'It uses a component-based architecture and virtual DOM for efficient rendering. ' +
           'React was developed by Facebook and is maintained by Meta.',
-      }
+      };
 
-      const normalizedTopic = topic.toLowerCase()
-      const result = knowledgeBase[normalizedTopic] ||
+      const normalizedTopic = topic.toLowerCase();
+      const result =
+        knowledgeBase[normalizedTopic] ||
         `No specific information found about "${topic}". ` +
-        `Try searching for: neural networks, typescript, or react.`
+          `Try searching for: neural networks, typescript, or react.`;
 
-      console.log(`     Found: ${result.substring(0, 50)}...`)
-      return result
+      console.log(`     Found: ${result.substring(0, 50)}...`);
+      return result;
     },
-  })
+  });
 
   // Step 3: Create the ReAct agent
-  console.log('Creating ReAct agent...')
+  console.log('Creating ReAct agent...');
 
   const agent = createReActAgent({
     model: () => adapter('gpt-4o-mini'),
@@ -131,61 +136,61 @@ async function main(): Promise<void> {
       'Always use tools when appropriate. Be concise but thorough.',
     tools: [calculateTool, searchTool],
     maxIterations: 5,
-  })
+  });
 
-  console.log('✓ Agent created with 2 tools\n')
+  console.log('✓ Agent created with 2 tools\n');
 
   // Step 4: Run the agent with a user query
-  const userQuery = 'What is 123 * 456, and tell me about neural networks?'
-  console.log(`💬 User: "${userQuery}"\n`)
+  const userQuery = 'What is 123 * 456, and tell me about neural networks?';
+  console.log(`💬 User: "${userQuery}"\n`);
 
-  const messages: Message[] = [
-    { role: 'user', content: userQuery },
-  ]
+  const messages: Message[] = [{ role: 'user', content: userQuery }];
 
   try {
-    console.log('🤖 Agent is thinking...\n')
+    console.log('🤖 Agent is thinking...\n');
 
-    const response = await agent.run(messages)
+    const response = await agent.run(messages);
 
     // Display tool calls if any
     if (response.result.toolCalls.length > 0) {
-      console.log('\n📋 Tool Calls Summary:')
+      console.log('\n📋 Tool Calls Summary:');
       for (const tc of response.result.toolCalls) {
-        console.log(`  - ${tc.name}(${JSON.stringify(tc.arguments)})`)
+        console.log(`  - ${tc.name}(${JSON.stringify(tc.arguments)})`);
       }
     }
 
     // Display the response
-    console.log('\n💬 Agent Response:')
-    console.log(response.result.content)
+    console.log('\n💬 Agent Response:');
+    console.log(response.result.content);
 
     // Show conversation history
-    console.log('\n\n📜 Full Conversation:')
-    console.log('=' .repeat(80))
+    console.log('\n\n📜 Full Conversation:');
+    console.log('='.repeat(80));
     for (const msg of response.messages) {
       if (msg.role === 'user') {
-        console.log(`\n👤 User: ${msg.content}`)
+        console.log(`\n👤 User: ${msg.content}`);
       } else if (msg.role === 'assistant') {
-        console.log(`\n🤖 Assistant: ${msg.content.substring(0, 100)}${msg.content.length > 100 ? '...' : ''}`)
+        console.log(
+          `\n🤖 Assistant: ${msg.content.substring(0, 100)}${msg.content.length > 100 ? '...' : ''}`,
+        );
       }
     }
 
-    console.log('\n\n✅ Example completed successfully!')
+    console.log('\n\n✅ Example completed successfully!');
   } catch (error) {
     if (error instanceof Error) {
       if (error.message.includes('rate limit')) {
-        console.error('\n❌ Rate limit exceeded. Please wait a moment and try again.')
+        console.error('\n❌ Rate limit exceeded. Please wait a moment and try again.');
       } else {
-        console.error('\n❌ Error:', error.message)
+        console.error('\n❌ Error:', error.message);
       }
     }
-    throw error
+    throw error;
   }
 }
 
 // Run with error handling
 main().catch((error: Error) => {
-  console.error('\n💥 Fatal error:', error.message)
-  process.exit(1)
-})
+  console.error('\n💥 Fatal error:', error.message);
+  process.exit(1);
+});

@@ -31,16 +31,16 @@
  * ```
  */
 
-import { createEmbeddingAdapter } from '@seashore/core.js'
+import { createEmbeddingAdapter } from '@seashore/core.js';
 
 // Validate environment variables
-const apiKey = process.env.OPENAI_API_KEY
-const baseURL = process.env.OPENAI_BASE_URL
+const apiKey = process.env.OPENAI_API_KEY;
+const baseURL = process.env.OPENAI_BASE_URL;
 
 if (!apiKey) {
-  console.error('❌ Error: OPENAI_API_KEY is required')
-  console.error('Please copy .env.example to .env and add your OpenAI API key')
-  process.exit(1)
+  console.error('❌ Error: OPENAI_API_KEY is required');
+  console.error('Please copy .env.example to .env and add your OpenAI API key');
+  process.exit(1);
 }
 
 // Sample documents for semantic search
@@ -65,44 +65,44 @@ const documents = [
     id: '5',
     text: 'Docker containers package applications with their dependencies for consistent deployment.',
   },
-]
+];
 
 async function main(): Promise<void> {
-  console.log('📊 Embedding Example\n')
+  console.log('📊 Embedding Example\n');
 
   // Step 1: Create the embedding adapter
   const adapter = createEmbeddingAdapter({
     provider: 'openai',
     apiKey,
     baseURL,
-  })
+  });
 
   // Step 2: Create embedder for a specific model
-  const embedder = adapter('text-embedding-3-small')
+  const embedder = adapter('text-embedding-3-small');
 
-  console.log(`Generating embeddings for ${documents.length} documents...`)
+  console.log(`Generating embeddings for ${documents.length} documents...`);
 
   // Step 3: Generate embeddings for all documents
-  const documentEmbeddings: Array<{ id: string; text: string; embedding: number[] }> = []
+  const documentEmbeddings: Array<{ id: string; text: string; embedding: number[] }> = [];
 
   try {
     for (const doc of documents) {
-      const embedding = await embedder.embed(doc.text)
+      const embedding = await embedder.embed(doc.text);
       documentEmbeddings.push({
         id: doc.id,
         text: doc.text,
         embedding,
-      })
-      console.log(`  ✓ Document ${doc.id}: ${embedding.length} dimensions`)
+      });
+      console.log(`  ✓ Document ${doc.id}: ${embedding.length} dimensions`);
     }
 
-    console.log(`\n✓ Generated ${documentEmbeddings.length} embeddings\n`)
+    console.log(`\n✓ Generated ${documentEmbeddings.length} embeddings\n`);
 
     // Step 4: Perform semantic search
-    const query = 'machine learning'
-    console.log(`🔍 Query: "${query}"\n`)
+    const query = 'machine learning';
+    console.log(`🔍 Query: "${query}"\n`);
 
-    const queryEmbedding = await embedder.embed(query)
+    const queryEmbedding = await embedder.embed(query);
 
     // Step 5: Calculate similarities and rank documents
     const results = documentEmbeddings
@@ -110,43 +110,43 @@ async function main(): Promise<void> {
         ...doc,
         similarity: cosineSimilarity(queryEmbedding, doc.embedding),
       }))
-      .sort((a, b) => b.similarity - a.similarity)
+      .sort((a, b) => b.similarity - a.similarity);
 
     // Step 6: Display top results
-    console.log('Top 3 Similar Documents:')
-    console.log('-'.repeat(80))
+    console.log('Top 3 Similar Documents:');
+    console.log('-'.repeat(80));
 
     for (let i = 0; i < Math.min(3, results.length); i++) {
-      const result = results[i]
-      console.log(`${i + 1}. ${result.text.substring(0, 60)}...`)
-      console.log(`   Similarity: ${result.similarity.toFixed(4)}\n`)
+      const result = results[i];
+      console.log(`${i + 1}. ${result.text.substring(0, 60)}...`);
+      console.log(`   Similarity: ${result.similarity.toFixed(4)}\n`);
     }
 
     // Bonus: Show distance calculation
-    console.log('📐 Similarity Analysis:')
-    console.log('-'.repeat(80))
+    console.log('📐 Similarity Analysis:');
+    console.log('-'.repeat(80));
 
-    const topResult = results[0]
-    const bottomResult = results[results.length - 1]
+    const topResult = results[0];
+    const bottomResult = results[results.length - 1];
 
-    console.log(`Most similar:    "${topResult.text.substring(0, 50)}..."`)
-    console.log(`                 Score: ${topResult.similarity.toFixed(4)}`)
-    console.log()
-    console.log(`Least similar:   "${bottomResult.text.substring(0, 50)}..."`)
-    console.log(`                 Score: ${bottomResult.similarity.toFixed(4)}`)
+    console.log(`Most similar:    "${topResult.text.substring(0, 50)}..."`);
+    console.log(`                 Score: ${topResult.similarity.toFixed(4)}`);
+    console.log();
+    console.log(`Least similar:   "${bottomResult.text.substring(0, 50)}..."`);
+    console.log(`                 Score: ${bottomResult.similarity.toFixed(4)}`);
 
-    console.log('\n✅ Example completed successfully!')
+    console.log('\n✅ Example completed successfully!');
   } catch (error) {
     if (error instanceof Error) {
       if (error.message.includes('rate limit')) {
-        console.error('\n❌ Rate limit exceeded. Please wait a moment and try again.')
+        console.error('\n❌ Rate limit exceeded. Please wait a moment and try again.');
       } else if (error.message.includes('authentication')) {
-        console.error('\n❌ Authentication failed. Please check your API key.')
+        console.error('\n❌ Authentication failed. Please check your API key.');
       } else {
-        console.error('\n❌ Error:', error.message)
+        console.error('\n❌ Error:', error.message);
       }
     }
-    throw error
+    throw error;
   }
 }
 
@@ -156,28 +156,28 @@ async function main(): Promise<void> {
  */
 function cosineSimilarity(a: number[], b: number[]): number {
   if (a.length !== b.length) {
-    throw new Error('Vectors must have the same dimensions')
+    throw new Error('Vectors must have the same dimensions');
   }
 
-  let dotProduct = 0
-  let normA = 0
-  let normB = 0
+  let dotProduct = 0;
+  let normA = 0;
+  let normB = 0;
 
   for (let i = 0; i < a.length; i++) {
-    dotProduct += a[i] * b[i]
-    normA += a[i] * a[i]
-    normB += b[i] * b[i]
+    dotProduct += a[i] * b[i];
+    normA += a[i] * a[i];
+    normB += b[i] * b[i];
   }
 
   if (normA === 0 || normB === 0) {
-    return 0
+    return 0;
   }
 
-  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB))
+  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
 }
 
 // Run with error handling
 main().catch((error: Error) => {
-  console.error('\n💥 Fatal error:', error.message)
-  process.exit(1)
-})
+  console.error('\n💥 Fatal error:', error.message);
+  process.exit(1);
+});

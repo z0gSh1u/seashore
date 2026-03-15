@@ -35,25 +35,25 @@
  * ```
  */
 
-import { createLLMAdapter, createEmbeddingAdapter } from '@seashore/core.js'
-import { createVectorDBService, createRAG, createChunker } from '@seashore/data.js'
-import { chat } from '@tanstack/ai'
+import { createLLMAdapter, createEmbeddingAdapter } from '@seashore/core.js';
+import { createVectorDBService, createRAG, createChunker } from '@seashore/data.js';
+import { chat } from '@tanstack/ai';
 
 // Validate environment variables
-const apiKey = process.env.OPENAI_API_KEY
-const baseURL = process.env.OPENAI_BASE_URL
-const databaseUrl = process.env.DATABASE_URL
+const apiKey = process.env.OPENAI_API_KEY;
+const baseURL = process.env.OPENAI_BASE_URL;
+const databaseUrl = process.env.DATABASE_URL;
 
 if (!apiKey) {
-  console.error('❌ Error: OPENAI_API_KEY is required')
-  console.error('Please copy .env.example to .env and add your OpenAI API key')
-  process.exit(1)
+  console.error('❌ Error: OPENAI_API_KEY is required');
+  console.error('Please copy .env.example to .env and add your OpenAI API key');
+  process.exit(1);
 }
 
 if (!databaseUrl) {
-  console.error('❌ Error: DATABASE_URL is required')
-  console.error('Please copy .env.example to .env and add your database connection string')
-  process.exit(1)
+  console.error('❌ Error: DATABASE_URL is required');
+  console.error('Please copy .env.example to .env and add your database connection string');
+  process.exit(1);
 }
 
 // Sample documents for the knowledge base
@@ -98,109 +98,109 @@ const documents = [
     `,
     metadata: { category: 'ai', source: 'research' },
   },
-]
+];
 
 async function main(): Promise<void> {
-  console.log('🔍 RAG Search Example\n')
+  console.log('🔍 RAG Search Example\n');
 
   // Step 1: Set up adapters
-  console.log('Setting up adapters...')
+  console.log('Setting up adapters...');
 
   const llmAdapter = createLLMAdapter({
     provider: 'openai',
     apiKey,
     baseURL,
-  })
+  });
 
   const embeddingAdapter = createEmbeddingAdapter({
     provider: 'openai',
     apiKey,
     baseURL,
-  })
+  });
 
-  console.log('✓ Adapters created\n')
+  console.log('✓ Adapters created\n');
 
   // Step 2: Connect to vector database
-  console.log('Connecting to vector database...')
+  console.log('Connecting to vector database...');
 
   const vectorDB = createVectorDBService({
     connectionString: databaseUrl,
-  })
+  });
 
   try {
-    await vectorDB.testConnection()
-    console.log('✓ Connected to PostgreSQL with pgvector\n')
+    await vectorDB.testConnection();
+    console.log('✓ Connected to PostgreSQL with pgvector\n');
   } catch (error) {
-    console.error('❌ Failed to connect to database')
+    console.error('❌ Failed to connect to database');
     if (error instanceof Error) {
-      console.error('Error:', error.message)
-      console.error('\nTroubleshooting:')
-      console.error('1. Ensure PostgreSQL is running')
-      console.error('2. Verify pgvector extension is installed')
-      console.error('3. Check your DATABASE_URL')
+      console.error('Error:', error.message);
+      console.error('\nTroubleshooting:');
+      console.error('1. Ensure PostgreSQL is running');
+      console.error('2. Verify pgvector extension is installed');
+      console.error('3. Check your DATABASE_URL');
     }
-    process.exit(1)
+    process.exit(1);
   }
 
   // Step 3: Create chunker for document processing
   const chunker = createChunker({
     chunkSize: 200,
     chunkOverlap: 50,
-  })
+  });
 
   // Step 4: Create RAG pipeline
-  console.log('Creating RAG pipeline...')
+  console.log('Creating RAG pipeline...');
 
   const rag = createRAG({
     embedder: embeddingAdapter('text-embedding-3-small'),
     vectorDB,
     chunker,
     hybridAlpha: 0.7, // 70% semantic, 30% keyword weight
-  })
+  });
 
-  console.log('✓ RAG pipeline created\n')
+  console.log('✓ RAG pipeline created\n');
 
   // Step 5: Index documents
-  console.log('Step 1: Indexing documents...')
+  console.log('Step 1: Indexing documents...');
 
   try {
-    const indexResult = await rag.indexDocuments(documents)
-    console.log(`✓ Indexed ${indexResult.documentCount} documents (${indexResult.chunkCount} chunks)\n`)
+    const indexResult = await rag.indexDocuments(documents);
+    console.log(
+      `✓ Indexed ${indexResult.documentCount} documents (${indexResult.chunkCount} chunks)\n`,
+    );
   } catch (error) {
-    console.error('❌ Failed to index documents')
+    console.error('❌ Failed to index documents');
     if (error instanceof Error) {
-      console.error('Error:', error.message)
+      console.error('Error:', error.message);
     }
-    process.exit(1)
+    process.exit(1);
   }
 
   // Step 6: Perform search
-  const query = 'neural networks for image recognition'
-  console.log(`Step 2: Searching for "${query}"...\n`)
+  const query = 'neural networks for image recognition';
+  console.log(`Step 2: Searching for "${query}"...\n`);
 
   try {
     const searchResults = await rag.retrieve({
       query,
       topK: 3,
       filter: { category: 'ai' }, // Filter to AI documents only
-    })
+    });
 
-    console.log('Top Results:')
-    console.log('-'.repeat(80))
+    console.log('Top Results:');
+    console.log('-'.repeat(80));
 
     for (let i = 0; i < searchResults.length; i++) {
-      const result = searchResults[i]
-      console.log(`\n${i + 1}. [Score: ${result.score.toFixed(4)}]`)
-      console.log(`   Source: ${result.metadata.source}`)
-      console.log(`   ${result.content.substring(0, 150)}...`)
+      const result = searchResults[i];
+      console.log(`\n${i + 1}. [Score: ${result.score.toFixed(4)}]`);
+      console.log(`   Source: ${result.metadata.source}`);
+      console.log(`   ${result.content.substring(0, 150)}...`);
     }
 
     // Step 7: Generate answer using RAG
-    console.log('\n\nStep 3: Generating answer with RAG...\n')
+    console.log('\n\nStep 3: Generating answer with RAG...\n');
 
-    const context = searchResults
-      .map((r, i) => `[${i + 1}] ${r.content}`)
-      .join('\n\n')
+    const context = searchResults.map((r, i) => `[${i + 1}] ${r.content}`).join('\n\n');
 
     const response = await chat({
       adapter: llmAdapter('gpt-4o-mini'),
@@ -214,31 +214,31 @@ async function main(): Promise<void> {
           content: `Context:\n${context}\n\nQuestion: ${query}`,
         },
       ],
-    })
+    });
 
-    console.log('🤖 Answer:')
-    console.log(response.text)
+    console.log('🤖 Answer:');
+    console.log(response.text);
 
     // Show which documents were referenced
-    console.log('\n📚 Sources:')
+    console.log('\n📚 Sources:');
     for (const result of searchResults) {
-      console.log(`  - ${result.metadata.source}: ${result.content.substring(0, 60)}...`)
+      console.log(`  - ${result.metadata.source}: ${result.content.substring(0, 60)}...`);
     }
 
-    console.log('\n\n✅ Example completed successfully!')
+    console.log('\n\n✅ Example completed successfully!');
   } catch (error) {
     if (error instanceof Error) {
-      console.error('\n❌ Error:', error.message)
+      console.error('\n❌ Error:', error.message);
     }
-    throw error
+    throw error;
   } finally {
     // Cleanup: Close database connection
-    await vectorDB.close()
+    await vectorDB.close();
   }
 }
 
 // Run with error handling
 main().catch((error: Error) => {
-  console.error('\n💥 Fatal error:', error.message)
-  process.exit(1)
-})
+  console.error('\n💥 Fatal error:', error.message);
+  process.exit(1);
+});

@@ -1,5 +1,5 @@
-export { createWorkflow, createStep } from './builder.js'
-export { DAG } from './dag.js'
+export { createWorkflow, createStep } from './builder.js';
+export { DAG } from './dag.js';
 export type {
   StepConfig,
   StepEdgeConfig,
@@ -10,4 +10,4 @@ export type {
   PendingWorkflow,
   HumanInputRequest,
   HumanInputResponse,
-} from './types.js'
+} from './types.js';

@@ -1,13 +1,5 @@
-import {
-  pgTable,
-  uuid,
-  text,
-  timestamp,
-  jsonb,
-  index,
-  customType,
-} from 'drizzle-orm/pg-core'
-import { vector } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, text, timestamp, jsonb, index, customType } from 'drizzle-orm/pg-core';
+import { vector } from 'drizzle-orm/pg-core';
 
 /**
  * Custom tsvector type for full-text search
@@ -15,9 +7,9 @@ import { vector } from 'drizzle-orm/pg-core'
  */
 const tsvector = customType<{ data: string }>({
   dataType() {
-    return 'tsvector'
+    return 'tsvector';
   },
-})
+});
 
 /**
  * Embeddings table for vector storage with pgvector
@@ -36,13 +28,10 @@ export const embeddings = pgTable(
   },
   (table) => [
     // HNSW index for fast approximate nearest neighbor search
-    index('seashore_embedding_hnsw_idx').using(
-      'hnsw',
-      table.embedding.op('vector_cosine_ops')
-    ),
+    index('seashore_embedding_hnsw_idx').using('hnsw', table.embedding.op('vector_cosine_ops')),
     // GIN index for full-text search
     index('seashore_content_tsv_idx').using('gin', table.contentTsv),
     // B-tree index for collection filtering
     index('seashore_collection_idx').on(table.collection),
-  ]
-)
+  ],
+);

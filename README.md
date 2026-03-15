@@ -51,20 +51,20 @@ npm install @seashore/react
 ### Basic ReAct Agent
 
 ```typescript
-import { createLLMAdapter, createTool } from "@seashore/core";
-import { createReActAgent } from "@seashore/agent";
+import { createLLMAdapter, createTool } from '@seashore/core';
+import { createReActAgent } from '@seashore/agent';
 
 // Setup LLM
 const llm = createLLMAdapter({
-  provider: "openai",
-  model: "gpt-4o",
+  provider: 'openai',
+  model: 'gpt-4o',
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 // Create tools
 const weatherTool = createTool({
-  name: "get_weather",
-  description: "Get current weather for a location",
+  name: 'get_weather',
+  description: 'Get current weather for a location',
   parameters: z.object({
     location: z.string(),
   }),
@@ -77,12 +77,12 @@ const weatherTool = createTool({
 const agent = createReActAgent({
   llm,
   tools: [weatherTool],
-  systemPrompt: "You are a helpful weather assistant.",
+  systemPrompt: 'You are a helpful weather assistant.',
 });
 
 // Run
 const result = await agent.run({
-  message: "What is the weather in San Francisco?",
+  message: 'What is the weather in San Francisco?',
 });
 
 console.log(result.message);
@@ -91,26 +91,26 @@ console.log(result.message);
 ### DAG Workflow
 
 ```typescript
-import { createWorkflow, createStep } from "@seashore/agent";
+import { createWorkflow, createStep } from '@seashore/agent';
 
 const workflow = createWorkflow({
-  name: "data-pipeline",
+  name: 'data-pipeline',
   steps: [
     createStep({
-      id: "fetch",
+      id: 'fetch',
       fn: async () => ({ data: [1, 2, 3] }),
     }),
     createStep({
-      id: "process",
+      id: 'process',
       fn: async ({ fetch }) => fetch.data.map((x) => x * 2),
-      dependencies: ["fetch"],
+      dependencies: ['fetch'],
     }),
     createStep({
-      id: "save",
+      id: 'save',
       fn: async ({ process }) => {
-        console.log("Saved:", process);
+        console.log('Saved:', process);
       },
-      dependencies: ["process"],
+      dependencies: ['process'],
     }),
   ],
 });
@@ -121,13 +121,13 @@ await workflow.execute();
 ### RAG Pipeline
 
 ```typescript
-import { createEmbeddingAdapter } from "@seashore/core";
-import { createVectorDB, createRAGPipeline } from "@seashore/data";
+import { createEmbeddingAdapter } from '@seashore/core';
+import { createVectorDB, createRAGPipeline } from '@seashore/data';
 
 // Setup embedding model
 const embedder = createEmbeddingAdapter({
-  provider: "openai",
-  model: "text-embedding-3-small",
+  provider: 'openai',
+  model: 'text-embedding-3-small',
   apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -146,13 +146,13 @@ const rag = createRAGPipeline({
 
 // Index documents
 await rag.indexDocuments([
-  { id: "1", content: "TypeScript is a typed superset of JavaScript." },
-  { id: "2", content: "React is a JavaScript library for UIs." },
+  { id: '1', content: 'TypeScript is a typed superset of JavaScript.' },
+  { id: '2', content: 'React is a JavaScript library for UIs.' },
 ]);
 
 // Retrieve
 const results = await rag.retrieve({
-  query: "What is TypeScript?",
+  query: 'What is TypeScript?',
   topK: 3,
   hybridAlpha: 0.5, // 0.5 = balanced semantic + keyword search
 });
@@ -161,18 +161,18 @@ const results = await rag.retrieve({
 ### Deploy with Hono
 
 ```typescript
-import { Hono } from "hono";
-import { createAgentMiddleware } from "@seashore/platform";
-import { createReActAgent } from "@seashore/agent";
+import { Hono } from 'hono';
+import { createAgentMiddleware } from '@seashore/platform';
+import { createReActAgent } from '@seashore/agent';
 
 const app = new Hono();
 
 const agent = createReActAgent({
-  llm: createLLMAdapter({ provider: "openai", model: "gpt-4o" }),
+  llm: createLLMAdapter({ provider: 'openai', model: 'gpt-4o' }),
   tools: [weatherTool],
 });
 
-app.post("/chat", createAgentMiddleware({ agent }));
+app.post('/chat', createAgentMiddleware({ agent }));
 
 export default app;
 ```
@@ -272,6 +272,7 @@ pnpm --filter @seashore/core test
 **📚 [Full Documentation](./docs/README.md)**
 
 Quick links:
+
 - [Getting Started](./docs/getting-started/installation.md) - Install and setup
 - [Quick Start](./docs/getting-started/quickstart.md) - Build your first agent in 5 minutes
 - [Tutorial](./docs/getting-started/tutorial.md) - Complete walkthrough

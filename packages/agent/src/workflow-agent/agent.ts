@@ -1,14 +1,14 @@
-import type { WorkflowResult } from '../workflow/types.js'
+import type { WorkflowResult } from '../workflow/types.js';
 
 /**
  * A workflow-like interface that the agent can wrap
  */
 interface WorkflowLike {
-  name: string
+  name: string;
   execute(options?: {
-    initialState?: Map<string, unknown>
-    abortSignal?: AbortSignal
-  }): Promise<WorkflowResult>
+    initialState?: Map<string, unknown>;
+    abortSignal?: AbortSignal;
+  }): Promise<WorkflowResult>;
 }
 
 /**
@@ -18,12 +18,12 @@ export interface WorkflowAgentConfig {
   /**
    * Name of the agent
    */
-  name: string
+  name: string;
 
   /**
    * Workflow to wrap
    */
-  workflow: WorkflowLike
+  workflow: WorkflowLike;
 }
 
 /**
@@ -33,12 +33,12 @@ export interface WorkflowAgent {
   /**
    * Name of the agent
    */
-  name: string
+  name: string;
 
   /**
    * Run the workflow with the given input
    */
-  run(input: string, options?: { abortSignal?: AbortSignal }): Promise<WorkflowResult>
+  run(input: string, options?: { abortSignal?: AbortSignal }): Promise<WorkflowResult>;
 }
 
 /**
@@ -84,12 +84,12 @@ export function createWorkflowAgent(config: WorkflowAgentConfig): WorkflowAgent 
   return {
     name: config.name,
     async run(input: string, options?: { abortSignal?: AbortSignal }): Promise<WorkflowResult> {
-      const initialState = new Map<string, unknown>()
-      initialState.set('__input', input)
+      const initialState = new Map<string, unknown>();
+      initialState.set('__input', input);
       return config.workflow.execute({
         initialState,
         abortSignal: options?.abortSignal,
-      })
+      });
     },
-  }
+  };
 }

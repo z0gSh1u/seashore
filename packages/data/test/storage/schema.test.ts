@@ -1,18 +1,18 @@
-import { describe, it, expect } from 'vitest'
-import { threads, messages, workflowRuns } from '../../src/storage/schema.js'
+import { describe, it, expect } from 'vitest';
+import { threads, messages, workflowRuns } from '../../src/storage/schema.js';
 
 describe('Storage Schema', () => {
   it('should export threads table', () => {
-    expect(threads).toBeDefined()
+    expect(threads).toBeDefined();
     // Drizzle tables have a Symbol for the table name
-    expect(typeof threads).toBe('object')
-  })
+    expect(typeof threads).toBe('object');
+  });
 
   it('should export messages table', () => {
-    expect(messages).toBeDefined()
-  })
+    expect(messages).toBeDefined();
+  });
 
   it('should export workflowRuns table', () => {
-    expect(workflowRuns).toBeDefined()
-  })
-})
+    expect(workflowRuns).toBeDefined();
+  });
+});

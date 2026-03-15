@@ -5,5 +5,5 @@
  * to @tanstack/ai tool definitions.
  */
 
-export { connectMCP, convertMCPToolToTanstack } from './client.js'
-export type { MCPConnectionConfig } from './client.js'
+export { connectMCP, convertMCPToolToTanstack } from './client.js';
+export type { MCPConnectionConfig } from './client.js';

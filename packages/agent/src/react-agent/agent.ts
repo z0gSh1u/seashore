@@ -1,4 +1,4 @@
-import { chat, maxIterations } from '@tanstack/ai'
+import { chat, maxIterations } from '@tanstack/ai';
 import type {
   ReActAgentConfig,
   ReActAgent,
@@ -7,7 +7,7 @@ import type {
   StreamingAgentResponse,
   RunOptions,
   AgentResult,
-} from './types.js'
+} from './types.js';
 
 /**
  * Creates a ReAct (Reasoning + Acting) agent that can use tools
@@ -52,36 +52,36 @@ export function createReActAgent(config: ReActAgentConfig): ReActAgent {
     maxIterations: maxIters = 10,
     guardrails = [],
     outputSchema,
-  } = config
+  } = config;
 
   /**
    * Apply all beforeRequest guardrails to messages
    */
   async function applyBeforeRequestGuardrails(messages: Message[]): Promise<Message[]> {
-    let processedMessages = messages
+    let processedMessages = messages;
 
     for (const guardrail of guardrails) {
       if (guardrail.beforeRequest) {
-        processedMessages = await guardrail.beforeRequest(processedMessages)
+        processedMessages = await guardrail.beforeRequest(processedMessages);
       }
     }
 
-    return processedMessages
+    return processedMessages;
   }
 
   /**
    * Apply all afterResponse guardrails to result
    */
   async function applyAfterResponseGuardrails(result: AgentResult): Promise<AgentResult> {
-    let processedResult = result
+    let processedResult = result;
 
     for (const guardrail of guardrails) {
       if (guardrail.afterResponse) {
-        processedResult = await guardrail.afterResponse(processedResult)
+        processedResult = await guardrail.afterResponse(processedResult);
       }
     }
 
-    return processedResult
+    return processedResult;
   }
 
   /**
@@ -92,21 +92,21 @@ export function createReActAgent(config: ReActAgentConfig): ReActAgent {
       model: model(),
       messages: [{ role: 'system' as const, content: systemPrompt }, ...messages],
       maxSteps: maxIterations(maxIters),
-    }
+    };
 
     if (tools.length > 0) {
-      chatOptions.tools = tools
+      chatOptions.tools = tools;
     }
 
     if (outputSchema) {
-      chatOptions.output = outputSchema
+      chatOptions.output = outputSchema;
     }
 
     if (options?.abortSignal) {
-      chatOptions.abortSignal = options.abortSignal
+      chatOptions.abortSignal = options.abortSignal;
     }
 
-    return chatOptions
+    return chatOptions;
   }
 
   const agent: ReActAgent = {
@@ -115,27 +115,27 @@ export function createReActAgent(config: ReActAgentConfig): ReActAgent {
      */
     async run(messages: Message[], options?: RunOptions): Promise<AgentResponse> {
       // Apply beforeRequest guardrails
-      const processedMessages = await applyBeforeRequestGuardrails(messages)
+      const processedMessages = await applyBeforeRequestGuardrails(messages);
 
       // Build chat options
-      const chatOptions = buildChatOptions(processedMessages, options)
+      const chatOptions = buildChatOptions(processedMessages, options);
 
       // Call TanStack AI chat
-      const response = await chat(chatOptions)
+      const response = await chat(chatOptions);
 
       // Extract result
       let result: AgentResult = {
         content: response.result?.content || '',
         toolCalls: response.result?.toolCalls || [],
-      }
+      };
 
       // Apply afterResponse guardrails
-      result = await applyAfterResponseGuardrails(result)
+      result = await applyAfterResponseGuardrails(result);
 
       return {
         messages: response.messages as Message[],
         result,
-      }
+      };
     },
 
     /**
@@ -143,30 +143,30 @@ export function createReActAgent(config: ReActAgentConfig): ReActAgent {
      */
     async stream(messages: Message[], options?: RunOptions): Promise<StreamingAgentResponse> {
       // Apply beforeRequest guardrails
-      const processedMessages = await applyBeforeRequestGuardrails(messages)
+      const processedMessages = await applyBeforeRequestGuardrails(messages);
 
       // Build chat options
-      const chatOptions = buildChatOptions(processedMessages, options)
+      const chatOptions = buildChatOptions(processedMessages, options);
 
       // Call TanStack AI chat
-      const response = await chat(chatOptions)
+      const response = await chat(chatOptions);
 
       // Extract result
       let result: AgentResult = {
         content: response.result?.content || '',
         toolCalls: response.result?.toolCalls || [],
-      }
+      };
 
       // Apply afterResponse guardrails
-      result = await applyAfterResponseGuardrails(result)
+      result = await applyAfterResponseGuardrails(result);
 
       return {
         messages: response.messages as Message[],
         result,
         stream: response.stream,
-      }
+      };
     },
-  }
+  };
 
-  return agent
+  return agent;
 }

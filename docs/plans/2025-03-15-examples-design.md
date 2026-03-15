@@ -56,34 +56,34 @@ pnpm example 03-advanced/01-doc-chatbot.ts
 
 Each example introduces one fundamental concept:
 
-| File | Package | Concept |
-|------|---------|---------|
-| `01-hello-llm.ts` | `@seashore/core` | LLM adapter basics |
-| `02-simple-tool.ts` | `@seashore/core` | Creating and using tools |
-| `03-workflow-chain.ts` | `@seashore/agent` | DAG workflow creation |
-| `04-embedding.ts` | `@seashore/core` | Text embeddings |
-| `05-storage.ts` | `@seashore/data` | Message/thread persistence |
+| File                   | Package           | Concept                    |
+| ---------------------- | ----------------- | -------------------------- |
+| `01-hello-llm.ts`      | `@seashore/core`  | LLM adapter basics         |
+| `02-simple-tool.ts`    | `@seashore/core`  | Creating and using tools   |
+| `03-workflow-chain.ts` | `@seashore/agent` | DAG workflow creation      |
+| `04-embedding.ts`      | `@seashore/core`  | Text embeddings            |
+| `05-storage.ts`        | `@seashore/data`  | Message/thread persistence |
 
 ### 02-intermediate: Feature Combinations
 
 Combines multiple packages and features:
 
-| File | Packages | Concepts |
-|------|----------|----------|
-| `01-react-agent.ts` | core + agent | Agent with tools |
-| `02-rag-search.ts` | core + data | Embedding + vector search + RAG |
-| `03-guardrails.ts` | platform | Input/output filtering |
-| `04-mcp-tools.ts` | platform | MCP server integration |
+| File                | Packages     | Concepts                        |
+| ------------------- | ------------ | ------------------------------- |
+| `01-react-agent.ts` | core + agent | Agent with tools                |
+| `02-rag-search.ts`  | core + data  | Embedding + vector search + RAG |
+| `03-guardrails.ts`  | platform     | Input/output filtering          |
+| `04-mcp-tools.ts`   | platform     | MCP server integration          |
 
 ### 03-advanced: Real-World Scenarios
 
 Complete applications demonstrating production patterns:
 
-| File | Packages | Scenario |
-|------|----------|----------|
-| `01-doc-chatbot.ts` | core + agent + data | Document Q&A with persistence |
-| `02-multi-agent.ts` | agent | Workflow orchestrating multiple agents |
-| `03-deploy-api.ts` | platform | Hono-based API deployment |
+| File                | Packages            | Scenario                               |
+| ------------------- | ------------------- | -------------------------------------- |
+| `01-doc-chatbot.ts` | core + agent + data | Document Q&A with persistence          |
+| `02-multi-agent.ts` | agent               | Workflow orchestrating multiple agents |
+| `03-deploy-api.ts`  | platform            | Hono-based API deployment              |
 
 ## Environment Configuration
 
@@ -108,28 +108,28 @@ VECTOR_DB_URL=postgresql://user:pass@localhost:5432/vectordb
 
 ```typescript
 // Environment validation
-const apiKey = process.env.OPENAI_API_KEY
-const baseURL = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1'
+const apiKey = process.env.OPENAI_API_KEY;
+const baseURL = process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1';
 
 if (!apiKey) {
-  console.error('Error: OPENAI_API_KEY is required')
-  console.error('Please copy .env.example to .env and fill in your keys')
-  process.exit(1)
+  console.error('Error: OPENAI_API_KEY is required');
+  console.error('Please copy .env.example to .env and fill in your keys');
+  process.exit(1);
 }
 
 // Configure adapter with custom base URL
 const llm = createLLMAdapter({
   provider: 'openai',
   apiKey,
-  baseURL,  // Support custom endpoints (e.g., proxy, local models)
-})
+  baseURL, // Support custom endpoints (e.g., proxy, local models)
+});
 ```
 
 ## Code Standards
 
 ### File Template
 
-```typescript
+````typescript
 /**
  * Example: [Title]
  *
@@ -149,14 +149,14 @@ const llm = createLLMAdapter({
  * ```
  */
 
-import { createLLMAdapter } from '@seashore/core'
-import type { Message } from '@seashore/agent'
+import { createLLMAdapter } from '@seashore/core';
+import type { Message } from '@seashore/agent';
 
 // Configuration
 const config = {
   apiKey: process.env.OPENAI_API_KEY!,
   baseURL: process.env.OPENAI_BASE_URL,
-}
+};
 
 // Main logic
 async function main(): Promise<void> {
@@ -165,10 +165,10 @@ async function main(): Promise<void> {
 
 // Error handling
 main().catch((error: Error) => {
-  console.error('Fatal error:', error.message)
-  process.exit(1)
-})
-```
+  console.error('Fatal error:', error.message);
+  process.exit(1);
+});
+````
 
 ### Error Handling Patterns
 

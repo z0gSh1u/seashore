@@ -5,7 +5,7 @@
  * RAG-powered applications.
  */
 
-export { createRAG } from './pipeline.js'
-export type { RAGConfig, RAGPipeline } from './pipeline.js'
-export { createChunker } from './chunker.js'
-export type { ChunkerConfig, Chunker } from './chunker.js'
+export { createRAG } from './pipeline.js';
+export type { RAGConfig, RAGPipeline } from './pipeline.js';
+export { createChunker } from './chunker.js';
+export type { ChunkerConfig, Chunker } from './chunker.js';

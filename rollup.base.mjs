@@ -25,12 +25,7 @@ export function createRollupConfig(opts = {}) {
         preserveModules: true,
         preserveModulesRoot: 'src',
       },
-      external: [
-        /node_modules/,
-        /^@tanstack\//,
-        /^@seashore\//,
-        ...external,
-      ],
+      external: [/node_modules/, /^@tanstack\//, /^@seashore\//, ...external],
       plugins: [
         resolve(),
         commonjs(),
@@ -48,12 +43,7 @@ export function createRollupConfig(opts = {}) {
         preserveModules: true,
         preserveModulesRoot: 'src',
       },
-      external: [
-        /node_modules/,
-        /^@tanstack\//,
-        /^@seashore\//,
-        ...external,
-      ],
+      external: [/node_modules/, /^@tanstack\//, /^@seashore\//, ...external],
       plugins: [dts({ tsconfig })],
     },
   ];

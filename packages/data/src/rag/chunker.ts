@@ -2,16 +2,16 @@
  * Chunker configuration
  */
 export interface ChunkerConfig {
-  strategy: 'fixed' | 'recursive'
-  chunkSize: number
-  overlap: number
+  strategy: 'fixed' | 'recursive';
+  chunkSize: number;
+  overlap: number;
 }
 
 /**
  * Text chunker interface
  */
 export interface Chunker {
-  chunk(text: string): string[]
+  chunk(text: string): string[];
 }
 
 /**
@@ -50,35 +50,35 @@ export function createChunker(config: ChunkerConfig): Chunker {
     chunk(text: string): string[] {
       switch (config.strategy) {
         case 'fixed':
-          return chunkFixed(text, config.chunkSize, config.overlap)
+          return chunkFixed(text, config.chunkSize, config.overlap);
         case 'recursive':
-          return chunkRecursive(text, config.chunkSize, config.overlap)
+          return chunkRecursive(text, config.chunkSize, config.overlap);
         default: {
-          const _exhaustive: never = config.strategy
-          throw new Error(`Unknown chunking strategy: ${String(_exhaustive)}`)
+          const _exhaustive: never = config.strategy;
+          throw new Error(`Unknown chunking strategy: ${String(_exhaustive)}`);
         }
       }
     },
-  }
+  };
 }
 
 /**
  * Fixed-size chunking with overlap
  */
 function chunkFixed(text: string, size: number, overlap: number): string[] {
-  if (text.length <= size) return [text]
+  if (text.length <= size) return [text];
 
-  const chunks: string[] = []
-  let start = 0
+  const chunks: string[] = [];
+  let start = 0;
   while (start < text.length) {
-    chunks.push(text.slice(start, start + size))
-    start += size - overlap
+    chunks.push(text.slice(start, start + size));
+    start += size - overlap;
     if (start + overlap >= text.length && start < text.length) {
       // Don't create tiny trailing chunks
-      break
+      break;
     }
   }
-  return chunks
+  return chunks;
 }
 
 /**
@@ -87,36 +87,36 @@ function chunkFixed(text: string, size: number, overlap: number): string[] {
  */
 function chunkRecursive(text: string, size: number, overlap: number): string[] {
   // Split by paragraph first, then by sentence, then by fixed size
-  const separators = ['\n\n', '\n', '. ', ' ']
+  const separators = ['\n\n', '\n', '. ', ' '];
 
   function split(input: string, sepIdx: number): string[] {
-    if (input.length <= size) return [input]
+    if (input.length <= size) return [input];
     if (sepIdx >= separators.length) {
-      return chunkFixed(input, size, overlap)
+      return chunkFixed(input, size, overlap);
     }
 
-    const sep = separators[sepIdx]!
-    const parts = input.split(sep)
-    const result: string[] = []
-    let current = ''
+    const sep = separators[sepIdx]!;
+    const parts = input.split(sep);
+    const result: string[] = [];
+    let current = '';
 
     for (const part of parts) {
-      const candidate = current ? current + sep + part : part
+      const candidate = current ? current + sep + part : part;
       if (candidate.length <= size) {
-        current = candidate
+        current = candidate;
       } else {
-        if (current) result.push(current)
+        if (current) result.push(current);
         if (part.length > size) {
-          result.push(...split(part, sepIdx + 1))
-          current = ''
+          result.push(...split(part, sepIdx + 1));
+          current = '';
         } else {
-          current = part
+          current = part;
         }
       }
     }
-    if (current) result.push(current)
-    return result
+    if (current) result.push(current);
+    return result;
   }
 
-  return split(text, 0)
+  return split(text, 0);
 }

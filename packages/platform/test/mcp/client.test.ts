@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { convertMCPToolToTanstack } from '../../src/mcp/client.js'
+import { describe, it, expect, vi } from 'vitest';
+import { convertMCPToolToTanstack } from '../../src/mcp/client.js';
 
 describe('convertMCPToolToTanstack', () => {
   it('should convert an MCP tool definition to @tanstack/ai format', () => {
@@ -13,10 +13,10 @@ describe('convertMCPToolToTanstack', () => {
         },
         required: ['query'],
       },
-    }
+    };
 
-    const converted = convertMCPToolToTanstack(mcpTool, vi.fn())
-    expect(converted).toBeDefined()
-    expect(converted.name).toBe('test_tool')
-  })
-})
+    const converted = convertMCPToolToTanstack(mcpTool, vi.fn());
+    expect(converted).toBeDefined();
+    expect(converted.name).toBe('test_tool');
+  });
+});

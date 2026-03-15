@@ -1,5 +1,5 @@
-import { toolDefinition } from '@tanstack/ai'
-import { z } from 'zod'
+import { toolDefinition } from '@tanstack/ai';
+import { z } from 'zod';
 
 export const serperSearchDefinition = toolDefinition({
   name: 'web_search',
@@ -23,15 +23,15 @@ export const serperSearchDefinition = toolDefinition({
       }),
     ),
   }),
-})
+});
 
 export interface SerperConfig {
-  apiKey: string
-  baseURL?: string
+  apiKey: string;
+  baseURL?: string;
 }
 
 export function createSerperSearch(config: SerperConfig) {
-  const baseURL = config.baseURL ?? 'https://google.serper.dev'
+  const baseURL = config.baseURL ?? 'https://google.serper.dev';
 
   return serperSearchDefinition.server(async (input: any) => {
     const response = await fetch(`${baseURL}/${input.type ?? 'search'}`, {
@@ -44,21 +44,21 @@ export function createSerperSearch(config: SerperConfig) {
         q: input.query,
         num: input.numResults ?? 10,
       }),
-    })
+    });
 
     if (!response.ok) {
-      const text = await response.text()
-      throw new Error(`Serper API error (${response.status}): ${text}`)
+      const text = await response.text();
+      throw new Error(`Serper API error (${response.status}): ${text}`);
     }
 
     const data = (await response.json()) as {
       organic?: Array<{
-        title: string
-        link: string
-        snippet: string
-        position: number
-      }>
-    }
+        title: string;
+        link: string;
+        snippet: string;
+        position: number;
+      }>;
+    };
 
     return {
       results: (data.organic ?? []).map((item) => ({
@@ -67,6 +67,6 @@ export function createSerperSearch(config: SerperConfig) {
         snippet: item.snippet,
         position: item.position,
       })),
-    }
-  })
+    };
+  });
 }

@@ -1,16 +1,15 @@
 // LLM
-export { createLLMAdapter } from './llm/index.js'
-export type { LLMAdapterConfig, LLMAdapterFactory, LLMProvider } from './llm/index.js'
+export { createLLMAdapter } from './llm';
+export type { LLMAdapterConfig, LLMAdapterFactory, LLMProvider } from './llm';
 
 // Embedding
-export { createEmbeddingAdapter } from './embedding/index.js'
-export type { EmbeddingConfig, EmbeddingAdapter, EmbeddingProvider } from './embedding/index.js'
+export { createEmbeddingAdapter } from './embedding';
+export type { EmbeddingConfig, EmbeddingAdapter, EmbeddingProvider } from './embedding';
 
 // Tool
-export { createToolkit, createSerperSearch, createFirecrawlScrape } from './tool/index.js'
-export { serperSearchDefinition, firecrawlScrapeDefinition } from './tool/index.js'
-export type { SerperConfig, FirecrawlConfig } from './tool/index.js'
+export { createToolkit, createSerperSearch, createFirecrawlScrape } from './tool';
+export { serperSearchDefinition, firecrawlScrapeDefinition } from './tool';
+export type { SerperConfig, FirecrawlConfig } from './tool';
 
 // Context Engineering
-export { systemPrompt, fewShotMessages } from './context/index.js'
-
+export { systemPrompt, fewShotMessages } from './context';

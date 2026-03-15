@@ -1,9 +1,9 @@
-export type LLMProvider = 'openai' | 'anthropic' | 'gemini'
+export type LLMProvider = 'openai' | 'anthropic' | 'gemini';
 
 export interface LLMAdapterConfig {
-  provider: LLMProvider
-  apiKey: string
-  baseURL?: string
+  provider: LLMProvider;
+  apiKey: string;
+  baseURL?: string;
 }
 
 /**
@@ -13,4 +13,4 @@ export interface LLMAdapterConfig {
  * Example: const adapter = createLLMAdapter({ provider: 'openai', apiKey: '...' })
  *          const chatAdapter = adapter('gpt-4o')
  */
-export type LLMAdapterFactory = (model: string) => unknown
+export type LLMAdapterFactory = (model: string) => unknown;

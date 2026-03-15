@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
 
 /**
  * Threads table - represents conversation threads
@@ -9,7 +9,7 @@ export const threads = pgTable('seashore_threads', {
   metadata: jsonb('metadata').$type<Record<string, unknown>>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-})
+});
 
 /**
  * Messages table - stores individual messages within threads
@@ -24,12 +24,12 @@ export const messages = pgTable('seashore_messages', {
   toolCalls: jsonb('tool_calls').$type<unknown[]>(),
   toolResults: jsonb('tool_results').$type<unknown[]>(),
   tokenUsage: jsonb('token_usage').$type<{
-    promptTokens?: number
-    completionTokens?: number
-    totalTokens?: number
+    promptTokens?: number;
+    completionTokens?: number;
+    totalTokens?: number;
   }>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-})
+});
 
 /**
  * Workflow runs table - tracks workflow execution state
@@ -46,4 +46,4 @@ export const workflowRuns = pgTable('seashore_workflow_runs', {
   error: text('error'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-})
+});

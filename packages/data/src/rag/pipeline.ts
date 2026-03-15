@@ -1,30 +1,26 @@
-import type { EmbeddingAdapter } from '@seashore/core'
-import type {
-  VectorDBService,
-  SearchResult,
-  DocumentInput,
-} from '../vectordb/service.js'
-import { createChunker, type ChunkerConfig } from './chunker.js'
+import type { EmbeddingAdapter } from '@seashore/core';
+import type { VectorDBService, SearchResult, DocumentInput } from '../vectordb/service.js';
+import { createChunker, type ChunkerConfig } from './chunker.js';
 
 /**
  * RAG pipeline configuration
  */
 export interface RAGConfig {
-  embedding: EmbeddingAdapter
-  vectordb: VectorDBService
-  collection: string
-  searchMode?: 'vector' | 'text' | 'hybrid'
-  topK?: number
-  hybridWeights?: { vector: number; text: number }
-  chunker?: ChunkerConfig
+  embedding: EmbeddingAdapter;
+  vectordb: VectorDBService;
+  collection: string;
+  searchMode?: 'vector' | 'text' | 'hybrid';
+  topK?: number;
+  hybridWeights?: { vector: number; text: number };
+  chunker?: ChunkerConfig;
 }
 
 /**
  * RAG pipeline interface for Retrieval-Augmented Generation
  */
 export interface RAGPipeline {
-  ingest(docs: DocumentInput[]): Promise<void>
-  retrieve(query: string): Promise<SearchResult[]>
+  ingest(docs: DocumentInput[]): Promise<void>;
+  retrieve(query: string): Promise<SearchResult[]>;
 }
 
 /**
@@ -69,32 +65,32 @@ export interface RAGPipeline {
  * ```
  */
 export function createRAG(config: RAGConfig): RAGPipeline {
-  const searchMode = config.searchMode ?? 'vector'
-  const topK = config.topK ?? 5
-  const hybridWeights = config.hybridWeights ?? { vector: 0.7, text: 0.3 }
+  const searchMode = config.searchMode ?? 'vector';
+  const topK = config.topK ?? 5;
+  const hybridWeights = config.hybridWeights ?? { vector: 0.7, text: 0.3 };
 
   return {
     async ingest(docs) {
-      let docsToIngest = docs
+      let docsToIngest = docs;
 
       // Apply chunking if configured
       if (config.chunker) {
-        const chunker = createChunker(config.chunker)
+        const chunker = createChunker(config.chunker);
         docsToIngest = docs.flatMap((doc) => {
-          const chunks = chunker.chunk(doc.content)
+          const chunks = chunker.chunk(doc.content);
           return chunks.map((chunk) => ({
             content: chunk,
             metadata: { ...doc.metadata, _originalContent: doc.content.slice(0, 100) },
-          }))
-        })
+          }));
+        });
       }
 
-      await config.vectordb.upsert(config.collection, docsToIngest, config.embedding)
+      await config.vectordb.upsert(config.collection, docsToIngest, config.embedding);
     },
 
     async retrieve(query) {
       const queryVector =
-        searchMode !== 'text' ? (await config.embedding.embed(query))[0] : undefined
+        searchMode !== 'text' ? (await config.embedding.embed(query))[0] : undefined;
 
       return config.vectordb.search(config.collection, {
         mode: searchMode,
@@ -102,7 +98,7 @@ export function createRAG(config: RAGConfig): RAGPipeline {
         vector: queryVector,
         text: searchMode !== 'vector' ? query : undefined,
         hybridWeights,
-      })
+      });
     },
-  }
+  };
 }

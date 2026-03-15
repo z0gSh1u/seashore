@@ -1,11 +1,11 @@
-import { chat } from '@tanstack/ai'
-import type { Guardrail, GuardrailResult } from './guardrail.js'
+import { chat } from '@tanstack/ai';
+import type { Guardrail, GuardrailResult } from './guardrail.js';
 
 export interface LLMGuardrailConfig {
-  name: string
-  adapter: unknown // @tanstack/ai adapter
-  prompt: string
-  parseResult: (output: string) => GuardrailResult
+  name: string;
+  adapter: unknown; // @tanstack/ai adapter
+  prompt: string;
+  parseResult: (output: string) => GuardrailResult;
 }
 
 export function createLLMGuardrail(config: LLMGuardrailConfig): Guardrail {
@@ -20,17 +20,17 @@ export function createLLMGuardrail(config: LLMGuardrailConfig): Guardrail {
             content: `${config.prompt}\n\nContent to evaluate:\n${String(response)}`,
           },
         ],
-      })
+      });
 
       // Extract text from the stream
-      let text = ''
+      let text = '';
       for await (const chunk of judgment as AsyncIterable<{ type: string; delta?: string }>) {
         if (chunk.type === 'content' && chunk.delta) {
-          text += chunk.delta
+          text += chunk.delta;
         }
       }
 
-      return config.parseResult(text)
+      return config.parseResult(text);
     },
-  }
+  };
 }

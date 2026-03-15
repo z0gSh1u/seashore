@@ -41,20 +41,25 @@
  * ```
  */
 
-import { createLLMAdapter, createEmbeddingAdapter } from '@seashore/core.js'
-import { createReActAgent, type Message } from '@seashore/agent.js'
-import { createVectorDBService, createRAG, createChunker, createStorageService } from '@seashore/data.js'
-import { chat } from '@tanstack/ai'
+import { createLLMAdapter, createEmbeddingAdapter } from '@seashore/core.js';
+import { createReActAgent, type Message } from '@seashore/agent.js';
+import {
+  createVectorDBService,
+  createRAG,
+  createChunker,
+  createStorageService,
+} from '@seashore/data.js';
+import { chat } from '@tanstack/ai';
 
 // Validate environment variables
-const apiKey = process.env.OPENAI_API_KEY
-const baseURL = process.env.OPENAI_BASE_URL
-const databaseUrl = process.env.DATABASE_URL
+const apiKey = process.env.OPENAI_API_KEY;
+const baseURL = process.env.OPENAI_BASE_URL;
+const databaseUrl = process.env.DATABASE_URL;
 
 if (!apiKey || !databaseUrl) {
-  console.error('❌ Error: OPENAI_API_KEY and DATABASE_URL are required')
-  console.error('Please copy .env.example to .env and fill in the required values')
-  process.exit(1)
+  console.error('❌ Error: OPENAI_API_KEY and DATABASE_URL are required');
+  console.error('Please copy .env.example to .env and fill in the required values');
+  process.exit(1);
 }
 
 // Sample knowledge base documents
@@ -96,57 +101,59 @@ const knowledgeBase = [
     `,
     metadata: { topic: 'typescript', source: 'benefits' },
   },
-]
+];
 
 async function main(): Promise<void> {
-  console.log('📚 Document Chatbot Example\n')
+  console.log('📚 Document Chatbot Example\n');
 
   // Step 1: Initialize adapters and services
-  console.log('Initializing knowledge base...')
+  console.log('Initializing knowledge base...');
 
   const llmAdapter = createLLMAdapter({
     provider: 'openai',
     apiKey,
     baseURL,
-  })
+  });
 
   const embeddingAdapter = createEmbeddingAdapter({
     provider: 'openai',
     apiKey,
     baseURL,
-  })
+  });
 
   const vectorDB = createVectorDBService({
     connectionString: databaseUrl,
-  })
+  });
 
   const storage = createStorageService({
     connectionString: databaseUrl,
-  })
+  });
 
   // Step 2: Set up RAG pipeline
   const chunker = createChunker({
     chunkSize: 300,
     chunkOverlap: 50,
-  })
+  });
 
   const rag = createRAG({
     embedder: embeddingAdapter('text-embedding-3-small'),
     vectorDB,
     chunker,
     hybridAlpha: 0.8,
-  })
+  });
 
   // Step 3: Index documents
   try {
-    await vectorDB.testConnection()
-    console.log('✓ Connected to database')
+    await vectorDB.testConnection();
+    console.log('✓ Connected to database');
 
-    const indexResult = await rag.indexDocuments(knowledgeBase)
-    console.log(`✓ Indexed ${indexResult.documentCount} documents (${indexResult.chunkCount} chunks)\n`)
+    const indexResult = await rag.indexDocuments(knowledgeBase);
+    console.log(
+      `✓ Indexed ${indexResult.documentCount} documents (${indexResult.chunkCount} chunks)\n`,
+    );
   } catch (error) {
-    console.error('❌ Failed to initialize knowledge base:', error)
-    process.exit(1)
+    console.error('❌ Failed to initialize knowledge base:', error);
+    process.exit(1);
   }
 
   // Step 4: Create conversation thread
@@ -155,40 +162,38 @@ async function main(): Promise<void> {
       title: 'TypeScript Q&A Session',
       type: 'doc-chatbot',
     },
-  })
+  });
 
-  console.log(`Created conversation thread: ${thread.id}\n`)
-  console.log('=' .repeat(80))
-  console.log('💬 Starting chat session (simulated)\n')
+  console.log(`Created conversation thread: ${thread.id}\n`);
+  console.log('='.repeat(80));
+  console.log('💬 Starting chat session (simulated)\n');
 
   // Step 5: Simulate multi-turn conversation
   const conversation: Array<{ role: 'user' | 'assistant'; content: string }> = [
     { role: 'user', content: 'What is TypeScript?' },
     { role: 'user', content: 'How is it different from JavaScript?' },
     { role: 'user', content: 'What are the main benefits?' },
-  ]
+  ];
 
-  const messages: Message[] = []
+  const messages: Message[] = [];
 
   for (let turn = 0; turn < conversation.length; turn++) {
-    const userMessage = conversation[turn]
+    const userMessage = conversation[turn];
 
     // Display user message
-    console.log(`\n👤 User: ${userMessage.content}`)
+    console.log(`\n👤 User: ${userMessage.content}`);
 
     // Add to conversation history
-    messages.push(userMessage)
+    messages.push(userMessage);
 
     // Step 6: Retrieve relevant context using RAG
     const searchResults = await rag.retrieve({
       query: userMessage.content,
       topK: 2,
-    })
+    });
 
     // Build context from retrieved documents
-    const context = searchResults
-      .map((r, i) => `[Source ${i + 1}] ${r.content}`)
-      .join('\n\n')
+    const context = searchResults.map((r, i) => `[Source ${i + 1}] ${r.content}`).join('\n\n');
 
     // Step 7: Generate response with context
     const systemPrompt =
@@ -196,30 +201,30 @@ async function main(): Promise<void> {
       'Use the provided context to answer accurately. ' +
       'If the context does not contain enough information, say so. ' +
       'Be concise but informative. ' +
-      'Consider the conversation history for context.'
+      'Consider the conversation history for context.';
 
     const response = await chat({
       adapter: llmAdapter('gpt-4o-mini'),
       system: `${systemPrompt}\n\nRelevant Context:\n${context}`,
       messages,
-    })
+    });
 
     // Display assistant response
-    console.log(`\n🤖 Bot: ${response.text}`)
-    console.log(`   (Sources: ${searchResults.map((r) => r.metadata.source).join(', ')})`)
+    console.log(`\n🤖 Bot: ${response.text}`);
+    console.log(`   (Sources: ${searchResults.map((r) => r.metadata.source).join(', ')})`);
 
     // Add assistant response to history
     messages.push({
       role: 'assistant',
       content: response.text,
-    })
+    });
 
     // Save messages to storage
     await storage.addMessage({
       threadId: thread.id,
       role: 'user',
       content: userMessage.content,
-    })
+    });
 
     await storage.addMessage({
       threadId: thread.id,
@@ -228,43 +233,43 @@ async function main(): Promise<void> {
       metadata: {
         sources: searchResults.map((r) => r.metadata.source),
       },
-    })
+    });
 
     // Simulate delay between turns
     if (turn < conversation.length - 1) {
-      await delay(1000)
+      await delay(1000);
     }
   }
 
   // Step 8: Display conversation summary
-  console.log('\n\n' + '=' .repeat(80))
-  console.log('\n📊 Conversation Summary\n')
+  console.log('\n\n' + '='.repeat(80));
+  console.log('\n📊 Conversation Summary\n');
 
-  const threadMessages = await storage.getMessages(thread.id)
-  console.log(`Total messages: ${threadMessages.length}`)
-  console.log(`Thread ID: ${thread.id}`)
+  const threadMessages = await storage.getMessages(thread.id);
+  console.log(`Total messages: ${threadMessages.length}`);
+  console.log(`Thread ID: ${thread.id}`);
 
-  console.log('\nConversation History:')
+  console.log('\nConversation History:');
   for (const msg of threadMessages) {
-    const timestamp = new Date(msg.createdAt).toLocaleTimeString()
-    console.log(`\n[${timestamp}] ${msg.role}:`)
-    console.log(`  ${msg.content.substring(0, 100)}...`)
+    const timestamp = new Date(msg.createdAt).toLocaleTimeString();
+    console.log(`\n[${timestamp}] ${msg.role}:`);
+    console.log(`  ${msg.content.substring(0, 100)}...`);
   }
 
   // Cleanup
-  console.log('\n\nCleaning up...')
-  await storage.close()
-  await vectorDB.close()
+  console.log('\n\nCleaning up...');
+  await storage.close();
+  await vectorDB.close();
 
-  console.log('\n✅ Example completed successfully!')
+  console.log('\n✅ Example completed successfully!');
 }
 
 function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // Run with error handling
 main().catch((error: Error) => {
-  console.error('\n💥 Fatal error:', error.message)
-  process.exit(1)
-})
+  console.error('\n💥 Fatal error:', error.message);
+  process.exit(1);
+});

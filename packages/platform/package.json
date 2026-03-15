@@ -12,14 +12,23 @@
     "url": "https://github.com/seashore/seashore.git",
     "directory": "packages/platform"
   },
-  "keywords": ["ai", "mcp", "guardrails", "evaluation", "deployment", "hono"],
+  "keywords": [
+    "ai",
+    "mcp",
+    "guardrails",
+    "evaluation",
+    "deployment",
+    "hono"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rollup -c rollup.config.mjs",
     "test": "vitest run",
@@ -33,7 +42,7 @@
     "@modelcontextprotocol/sdk": "^1.0.4",
     "@tanstack/ai": "^0.4.0",
     "hono": "^4.6.14",
-    "zod": "^3.24.1"
+    "zod": "4"
   },
   "devDependencies": {
     "typescript": "catalog:",
